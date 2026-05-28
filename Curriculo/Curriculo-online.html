@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Currículo Online</title>
+  <link rel="stylesheet" href="Curriculo-online.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="form-box">
+      <h1>📄 Criador de Currículo</h1>
+      <p>Preencha seus dados abaixo</p>
+
+      <form id="formCurriculo">
+
+        <div class="grid">
+          <input type="text" id="nome" placeholder="Nome completo" required>
+          <input type="email" id="email" placeholder="E-mail" required>
+        </div>
+
+        <input type="text" id="telefone" placeholder="Telefone" required>
+
+        <textarea id="objetivo" placeholder="Objetivo profissional"></textarea>
+
+        <textarea id="experiencia" placeholder="Experiências profissionais"></textarea>
+
+        <textarea id="habilidades" placeholder="Habilidades (Office, digitação, etc)"></textarea>
+
+        <button type="submit">Gerar Currículo</button>
+      </form>
+    </div>
+
+    <div class="preview-box">
+      <h2>Pré-visualização</h2>
+      <div id="resultado" class="resultado">
+        <p>Seu currículo aparecerá aqui...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="Curriculo-online.js"></script>
+</body>
+</html>
