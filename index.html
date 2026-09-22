@@ -392,7 +392,7 @@ html[data-theme="dark"] .btn.light{color:#1F1A2E}
         <div class="field"><label for="cvResumo">Resumo profissional <span class="hint" id="resumoCount"></span></label><textarea id="cvResumo" name="resumo" placeholder="Quem você é, o que estuda e o que quer construir. Entre 120 e 400 caracteres."></textarea></div>
         <div class="field"><label for="cvForm2">Formação (uma por linha)</label><textarea id="cvForm2" name="formacao" placeholder="Estética Corporal, Faculdade X, 2024 a 2026"></textarea></div>
         <div class="field"><label for="cvExp">Experiências e projetos (um por linha)</label><textarea id="cvExp" name="exp" placeholder="Atendimento voluntário em evento da faculdade, 2025"></textarea></div>
-        <div class="field"><label for="cvSkills">Habilidades (separadas por vírgula)</label><input id="cvSkills" name="skills" placeholder="Comunicação, Excel, Trabalho em equipe"></div>
+        <div class="field"><label for="cvSkills">Habilidades (separadas por vírgula, ponto e vírgula ou uma por linha)</label><textarea id="cvSkills" name="skills" placeholder="Comunicação, Excel, Trabalho em equipe"></textarea></div>
         <div class="field"><label for="cvIdiomas">Idiomas</label><input id="cvIdiomas" name="idiomas" placeholder="Inglês básico, Espanhol intermediário"></div>
         <button type="button" class="btn ghost small" id="cvClear">Limpar tudo</button>
       </form>
@@ -674,7 +674,7 @@ window.addEventListener('hashchange',()=>{
 const CVF={nome:'#cvNome',cargo:'#cvCargo',email:'#cvEmail',tel:'#cvTel',cidade:'#cvCidade',resumo:'#cvResumo',formacao:'#cvForm2',exp:'#cvExp',skills:'#cvSkills',idiomas:'#cvIdiomas'};
 function cvData(){const d={};for(const k in CVF)d[k]=$(CVF[k]).value.trim();return d}
 const lines=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
-const csv=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
+const csv=s=>s.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
 const okEmail=s=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 function cvChecks(d){
   const tel=d.tel.replace(/\D/g,'');
