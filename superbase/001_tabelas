@@ -1,0 +1,244 @@
+-- =====================================================================
+-- OrientaPro · 001_tabelas.sql
+-- Cria os tipos, a função de validação de CNPJ e as 16 tabelas do DER.
+-- Rode no Supabase: SQL Editor > New query > colar > Run.
+-- Ordem dos arquivos: 001 → 002 → 003 → 004 → 005.
+-- =====================================================================
+
+-- ---------- Tipos enumerados ----------
+create type public.tipo_usuario_enum       as enum ('ESTUDANTE','EMPRESA','ADMIN');
+create type public.origem_curriculo_enum   as enum ('MANUAL','IA','UPLOAD');
+create type public.nivel_formacao_enum     as enum ('MEDIO','TECNICO','SUPERIOR','POS','LIVRE');
+create type public.nivel_habilidade_enum   as enum ('BASICO','INTERMEDIARIO','AVANCADO');
+create type public.status_teste_enum       as enum ('EM_ANDAMENTO','CONCLUIDO');
+create type public.tipo_contrato_enum      as enum ('ESTAGIO','JOVEM_APRENDIZ','TRAINEE','CLT','PJ');
+create type public.modalidade_enum         as enum ('PRESENCIAL','HIBRIDO','REMOTO');
+create type public.status_vaga_enum        as enum ('ABERTA','PAUSADA','ENCERRADA');
+create type public.status_candidatura_enum as enum ('ENVIADA','EM_ANALISE','APROVADA','REPROVADA','CANCELADA');
+create type public.tipo_notificacao_enum   as enum ('NOVA_CANDIDATURA','STATUS_CANDIDATURA','EMPRESA_VERIFICADA','SISTEMA');
+
+-- ---------- RN02: validação dos dígitos verificadores do CNPJ ----------
+create or replace function public.validar_cnpj(p text)
+returns boolean language plpgsql immutable as $$
+declare
+  d  int[];
+  s  int;
+  r  int;
+  w1 int[] := array[5,4,3,2,9,8,7,6,5,4,3,2];
+  w2 int[] := array[6,5,4,3,2,9,8,7,6,5,4,3,2];
+begin
+  if p is null or p !~ '^\d{14}$' or p ~ '^(\d)\1{13}$' then return false; end if;
+  d := array(select substr(p, g, 1)::int from generate_series(1, 14) g);
+  s := 0; for k in 1..12 loop s := s + d[k] * w1[k]; end loop;
+  r := s % 11;
+  if (case when r < 2 then 0 else 11 - r end) <> d[13] then return false; end if;
+  s := 0; for k in 1..13 loop s := s + d[k] * w2[k]; end loop;
+  r := s % 11;
+  return (case when r < 2 then 0 else 11 - r end) = d[14];
+end $$;
+
+-- ---------- Tabela 01: USUARIOS (perfil; a senha fica em auth.users) ----------
+create table public.usuarios (
+  id_usuario      uuid primary key references auth.users(id) on delete cascade,
+  nome_completo   varchar(150) not null,
+  email           varchar(150) not null unique,                       -- RN01
+  telefone        char(11) check (telefone ~ '^\d{11}$'),
+  data_nascimento date,
+  tipo_usuario    public.tipo_usuario_enum not null default 'ESTUDANTE',
+  foto_url        varchar(255),
+  ativo           boolean not null default true,
+  motivo_bloqueio text,
+  data_cadastro   timestamptz not null default now(),
+  constraint ck_usuarios_estudante_nasc check (tipo_usuario <> 'ESTUDANTE' or data_nascimento is not null),
+  constraint ck_usuarios_bloqueio       check (ativo or motivo_bloqueio is not null)
+);
+
+-- ---------- Tabela 02: EMPRESAS ----------
+create table public.empresas (
+  id_empresa             bigint generated always as identity primary key,
+  id_usuario_responsavel uuid not null unique references public.usuarios(id_usuario) on delete cascade,
+  razao_social           varchar(150) not null,
+  nome_fantasia          varchar(100),
+  cnpj                   char(14) not null unique check (public.validar_cnpj(cnpj)),   -- RN02
+  email_contato          varchar(150) not null,
+  telefone               char(11),
+  descricao              text,
+  logo_url               varchar(255),
+  verificada             boolean not null default false,                               -- RN08
+  data_cadastro          timestamptz not null default now()
+);
+
+-- ---------- Tabela 03: AREAS_PROFISSIONAIS ----------
+create table public.areas_profissionais (
+  id_area   bigint generated always as identity primary key,
+  nome      varchar(80) not null unique,
+  descricao text
+);
+
+-- ---------- Tabela 04: CURRICULOS ----------
+create table public.curriculos (
+  id_curriculo    bigint generated always as identity primary key,
+  id_usuario      uuid not null references public.usuarios(id_usuario) on delete cascade,
+  titulo          varchar(100) not null,
+  resumo          text,
+  modelo          varchar(30),
+  origem          public.origem_curriculo_enum not null,
+  caminho_arquivo varchar(255),
+  telefone        varchar(11) check (telefone ~ '^\d{10,11}$'),   -- contato exibido no currículo
+  cidade          varchar(80),
+  idiomas         varchar(200),
+  criado_em       timestamptz not null default now(),
+  atualizado_em   timestamptz not null default now(),
+  constraint uq_curriculos_dono     unique (id_curriculo, id_usuario),            -- usada pela FK composta de CANDIDATURAS
+  constraint ck_curriculos_resumo   check (origem = 'UPLOAD' or resumo is not null),
+  constraint ck_curriculos_arquivo  check (origem <> 'UPLOAD' or caminho_arquivo is not null)
+);
+
+-- ---------- Tabela 05: EXPERIENCIAS ----------
+create table public.experiencias (
+  id_experiencia bigint generated always as identity primary key,
+  id_curriculo   bigint not null references public.curriculos(id_curriculo) on delete cascade,
+  empresa        varchar(120) not null,
+  cargo          varchar(100) not null,
+  descricao      text,
+  data_inicio    date not null,
+  data_fim       date,
+  constraint ck_experiencias_datas check (data_fim is null or data_fim >= data_inicio)
+);
+
+-- ---------- Tabela 06: FORMACOES ----------
+create table public.formacoes (
+  id_formacao  bigint generated always as identity primary key,
+  id_curriculo bigint not null references public.curriculos(id_curriculo) on delete cascade,
+  instituicao  varchar(150) not null,
+  curso        varchar(120) not null,
+  nivel        public.nivel_formacao_enum not null,
+  ano_inicio   smallint not null check (ano_inicio between 1950 and 2100),
+  ano_fim      smallint,
+  constraint ck_formacoes_anos check (ano_fim is null or ano_fim >= ano_inicio)
+);
+
+-- ---------- Tabela 07: HABILIDADES ----------
+create table public.habilidades (
+  id_habilidade bigint generated always as identity primary key,
+  nome          varchar(60) not null unique
+);
+
+-- ---------- Tabela 08: CURRICULO_HABILIDADES (N:N) ----------
+create table public.curriculo_habilidades (
+  id_curriculo  bigint not null references public.curriculos(id_curriculo) on delete cascade,
+  id_habilidade bigint not null references public.habilidades(id_habilidade) on delete restrict,
+  nivel         public.nivel_habilidade_enum,                    -- opcional: o site ainda não pergunta o nível
+  primary key (id_curriculo, id_habilidade)
+);
+
+-- ---------- Tabela 09: PERGUNTAS_TESTE ----------
+create table public.perguntas_teste (
+  id_pergunta bigint generated always as identity primary key,
+  enunciado   text not null,
+  ordem       smallint not null unique check (ordem > 0),
+  ativa       boolean not null default true
+);
+
+-- ---------- Tabela 10: ALTERNATIVAS ----------
+create table public.alternativas (
+  id_alternativa bigint generated always as identity primary key,
+  id_pergunta    bigint not null references public.perguntas_teste(id_pergunta) on delete cascade,
+  id_area        bigint not null references public.areas_profissionais(id_area) on delete restrict,
+  texto          varchar(255) not null,
+  peso           smallint not null default 1 check (peso between 1 and 5),
+  constraint uq_alternativas_pergunta unique (id_alternativa, id_pergunta)      -- usada pela FK composta de RESPOSTAS_TESTE
+);
+
+-- ---------- Tabela 11: TESTES_VOCACIONAIS ----------
+create table public.testes_vocacionais (
+  id_teste            bigint generated always as identity primary key,
+  id_usuario          uuid not null references public.usuarios(id_usuario) on delete cascade,
+  id_area_recomendada bigint references public.areas_profissionais(id_area) on delete restrict,
+  status              public.status_teste_enum not null default 'EM_ANDAMENTO',
+  iniciado_em         timestamptz not null default now(),
+  concluido_em        timestamptz,
+  constraint ck_testes_conclusao check (
+    (status = 'CONCLUIDO') = (concluido_em is not null and id_area_recomendada is not null))
+);
+
+-- ---------- Tabela 12: RESPOSTAS_TESTE ----------
+create table public.respostas_teste (
+  id_teste       bigint not null references public.testes_vocacionais(id_teste) on delete cascade,
+  id_pergunta    bigint not null,
+  id_alternativa bigint not null,
+  primary key (id_teste, id_pergunta),                                           -- uma resposta por pergunta
+  constraint fk_respostas_alternativa foreign key (id_alternativa, id_pergunta)
+    references public.alternativas(id_alternativa, id_pergunta) on delete restrict
+);
+
+-- ---------- Tabela 13: CURSOS ----------
+create table public.cursos (
+  id_curso      bigint generated always as identity primary key,
+  id_area       bigint not null references public.areas_profissionais(id_area) on delete restrict,
+  nome          varchar(150) not null,
+  instituicao   varchar(120) not null,
+  descricao     text,
+  carga_horaria smallint not null check (carga_horaria > 0),
+  preco         numeric(10,2) not null default 0 check (preco >= 0),
+  link_curso    varchar(255) not null,
+  ativo         boolean not null default true
+);
+
+-- ---------- Tabela 14: VAGAS ----------
+create table public.vagas (
+  id_vaga           bigint generated always as identity primary key,
+  id_empresa        bigint not null references public.empresas(id_empresa) on delete cascade,
+  id_area           bigint not null references public.areas_profissionais(id_area) on delete restrict,
+  titulo            varchar(100) not null,
+  descricao         text not null,
+  requisitos        text not null,
+  tipo_contrato     public.tipo_contrato_enum not null,
+  modalidade        public.modalidade_enum not null,
+  cidade            varchar(80),
+  uf                char(2),
+  salario_min       numeric(10,2) check (salario_min >= 0),
+  salario_max       numeric(10,2),
+  status            public.status_vaga_enum not null default 'ABERTA',
+  data_publicacao   timestamptz not null default now(),
+  data_encerramento date,
+  constraint ck_vagas_local   check (modalidade = 'REMOTO' or (cidade is not null and uf is not null)),
+  constraint ck_vagas_salario check (salario_max is null or salario_min is null or salario_max >= salario_min)  -- RN09
+);
+
+-- ---------- Tabela 15: CANDIDATURAS ----------
+create table public.candidaturas (
+  id_candidatura   bigint generated always as identity primary key,
+  id_vaga          bigint not null references public.vagas(id_vaga) on delete cascade,
+  id_usuario       uuid not null references public.usuarios(id_usuario) on delete cascade,
+  id_curriculo     bigint not null,
+  status           public.status_candidatura_enum not null default 'ENVIADA',
+  mensagem         varchar(500),
+  data_candidatura timestamptz not null default now(),
+  atualizado_em    timestamptz not null default now(),
+  constraint uq_candidaturas_vaga_usuario unique (id_vaga, id_usuario),           -- RN05
+  constraint fk_candidaturas_curriculo foreign key (id_curriculo, id_usuario)     -- currículo do próprio candidato
+    references public.curriculos(id_curriculo, id_usuario)                        -- ON DELETE NO ACTION (padrão)
+);
+
+-- ---------- Tabela 16: NOTIFICACOES ----------
+create table public.notificacoes (
+  id_notificacao bigint generated always as identity primary key,
+  id_usuario     uuid not null references public.usuarios(id_usuario) on delete cascade,
+  tipo           public.tipo_notificacao_enum not null,
+  titulo         varchar(100) not null,
+  mensagem       varchar(500) not null,
+  lida           boolean not null default false,
+  criada_em      timestamptz not null default now()
+);
+
+-- Índices das chaves estrangeiras mais consultadas
+create index on public.curriculos (id_usuario);
+create index on public.experiencias (id_curriculo);
+create index on public.formacoes (id_curriculo);
+create index on public.alternativas (id_pergunta);
+create index on public.testes_vocacionais (id_usuario);
+create index on public.vagas (id_empresa);
+create index on public.vagas (id_area);
+create index on public.candidaturas (id_usuario);
+create index on public.notificacoes (id_usuario, lida);
