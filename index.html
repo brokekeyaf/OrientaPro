@@ -174,10 +174,13 @@ input.bad,select.bad{border-color:var(--rose)}
 
 footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--ink-2);font-size:.92rem}
 
+/* Impressão do currículo: só a área #printArea vai para o papel (sem página em branco extra) */
+#printArea{display:none}
 @media print{
-  body *{visibility:hidden}
-  #cvPaper,#cvPaper *{visibility:visible}
-  #cvPaper{position:absolute;left:0;top:0;width:100%;border:0}
+  @page{size:A4;margin:0}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block;padding:14mm 16mm}
+  #printArea .cv-paper{border:0;border-radius:0;box-shadow:none;padding:0;min-height:0;background:#fff}
 }
 
 /* ===== Layout no estilo do OrientaPro original (cores e fontes estimadas: ajuste nos tokens :root) ===== */
@@ -241,7 +244,7 @@ html[data-theme="dark"]{color-scheme:dark;--purple:#3E1C66;--link:#C79BEA;--ink:
 html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#2A2238;color:var(--ink)}
 html[data-theme="dark"] .opt{background:var(--card);color:var(--ink)}
 html[data-theme="dark"] .opt:hover{background:#2A2238}
-html[data-theme="dark"] .tag,html[data-theme="dark"] .progress,html[data-theme="dark"] .bars .track,html[data-theme="dark"] .opt .k,html[data-theme="dark"] .cv-paper .chips span{background:#2E2540}
+html[data-theme="dark"] .tag,html[data-theme="dark"] .progress,html[data-theme="dark"] .bars .track,html[data-theme="dark"] .opt .k{background:#2E2540}
 html[data-theme="dark"] .tag.mint{background:#0F3B33;color:#7FE3CF}
 html[data-theme="dark"] .tag.amber{background:#4A3600;color:#FFD877}
 html[data-theme="dark"] .last-result{background:var(--card);color:var(--ink)}
@@ -249,6 +252,22 @@ html[data-theme="dark"] .btn.ghost:hover{color:#15111D}
 html[data-theme="dark"] .fav[aria-pressed="true"]{color:#1F1A2E}
 html[data-theme="dark"] .btn.hero-btn,html[data-theme="dark"] .btn{color:#fff}
 html[data-theme="dark"] .btn.light{color:#1F1A2E}
+
+/* ===== Conta (Supabase) e currículo estruturado ===== */
+.msg{margin-top:.8rem;font-size:.95rem}
+.msg.ok{color:var(--mint)} .msg.no{color:var(--rose)}
+.linkbtn{background:none;border:0;padding:0;color:var(--link);font:inherit;text-decoration:underline;cursor:pointer}
+.acoes{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+fieldset.rep{border:0;padding:0;margin:0 0 1rem}
+fieldset.rep legend{font-weight:600;font-size:.92rem;margin-bottom:.4rem;padding:0}
+.rep-item{border:1.5px solid var(--line);border-radius:var(--r-md);padding:.9rem .9rem .2rem;margin-bottom:.7rem;position:relative}
+.rep-item .rm{position:absolute;top:.4rem;right:.5rem}
+.rep-item .row{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.cv-lista{list-style:none;margin:.6rem 0 0;padding:0}
+.cv-lista li{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.55rem 0;border-top:1px solid var(--line)}
+.cv-lista li.atual strong::after{content:" (editando)";font-weight:400;color:var(--ink-2)}
+details.termo{margin:.2rem 0 .8rem;font-size:.92rem;color:var(--ink-2)}
+details.termo summary{cursor:pointer;color:var(--link)}
 </style>
 </head>
 <body>
@@ -264,6 +283,7 @@ html[data-theme="dark"] .btn.light{color:#1F1A2E}
       <a href="#recursos">Recursos</a>
       <a href="#vagas">Vagas</a>
       <a href="#cadastro">Cadastro</a>
+      <a href="#entrar" id="navConta">Entrar</a>
     </nav>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="Ativar modo escuro" aria-pressed="false">🌙</button>
   </div>
@@ -316,22 +336,71 @@ html[data-theme="dark"] .btn.light{color:#1F1A2E}
 
     <section class="block" id="cadastro" aria-labelledby="h-cad">
       <h2 id="h-cad">Cadastro</h2>
-      <p class="center">Crie seu perfil para personalizar as sugestões. Neste protótipo os dados ficam apenas no seu navegador.</p>
+      <p class="center" id="cadIntro">Crie seu perfil para personalizar as sugestões. Neste protótipo os dados ficam apenas no seu navegador.</p>
       <div style="max-width:560px;margin:1.5rem auto 0">
         <form class="panel" id="cadForm" novalidate>
       <div class="field"><label for="cNome">Nome</label><input id="cNome" autocomplete="name"><div class="err" data-for="cNome"></div></div>
       <div class="field"><label for="cEmail">E-mail</label><input id="cEmail" type="email" autocomplete="email"><div class="err" data-for="cEmail"></div></div>
-      <div class="row">
-        <div class="field"><label for="cCurso">Curso</label><input id="cCurso"><div class="err" data-for="cCurso"></div></div>
-        <div class="field"><label for="cPeriodo">Período</label><select id="cPeriodo"><option value="">Selecione</option><option>1º ao 2º semestre</option><option>3º ao 4º semestre</option><option>5º semestre em diante</option><option>Já formado(a)</option></select><div class="err" data-for="cPeriodo"></div></div>
-      </div>
+      <div class="field"><label for="cNasc">Data de nascimento</label><input id="cNasc" type="date" autocomplete="bday"><div class="err" data-for="cNasc"></div></div>
       <div class="field"><label for="cSenha">Senha (mínimo 8 caracteres, com letra e número)</label><input id="cSenha" type="password" autocomplete="new-password"><div class="err" data-for="cSenha"></div></div>
-      <div class="field"><label style="display:flex;gap:.6rem;font-weight:400;align-items:flex-start"><input id="cAceite" type="checkbox" style="width:20px;height:20px;min-height:0;flex:none;margin-top:.15rem"> Concordo em guardar estes dados neste navegador para fins de demonstração.</label><div class="err" data-for="cAceite"></div></div>
-      <button class="btn" type="submit">Criar meu perfil</button>
+      <div class="field"><label style="display:flex;gap:.6rem;font-weight:400;align-items:flex-start"><input id="cAceite" type="checkbox" style="width:20px;height:20px;min-height:0;flex:none;margin-top:.15rem"> <span id="cAceiteTxt">Concordo em guardar estes dados neste navegador para fins de demonstração.</span></label><div class="err" data-for="cAceite"></div>
+        <details class="termo"><summary>Ler o termo de uso e privacidade</summary>
+          <p>O OrientaPro coleta nome, e-mail, data de nascimento e os dados que você colocar no currículo e no teste, apenas para oferecer orientação profissional e, quando você se candidatar, mostrar seu currículo à empresa da vaga. Seus dados não são vendidos nem usados para publicidade. A senha é guardada somente como hash pelo Supabase Auth. Você pode pedir a exclusão da conta a qualquer momento pelo e-mail de contato do projeto, e os dados pessoais são removidos em até 15 dias (LGPD, Lei nº 13.709/2018).</p>
+        </details></div>
+      <button class="btn" type="submit" id="cadBtn">Criar meu perfil</button>
+      <p class="hint" id="cadJaTem" hidden style="margin-top:.8rem">Já tem conta? <a href="#entrar">Entrar</a></p>
       <div id="cadOk" role="status" style="margin-top:1rem"></div>
     </form>
       </div>
     </section>
+  </div>
+</section>
+
+<!-- ENTRAR / MINHA CONTA (UC02, RF03) -->
+<section class="view" data-view="entrar" aria-labelledby="h-entrar">
+  <div class="wrap" style="max-width:560px">
+    <div class="view-head"><h2 id="h-entrar">Entrar</h2><p>Acesse sua conta para salvar o resultado do teste e os seus currículos.</p></div>
+
+    <div class="panel" id="contaDemo" hidden>
+      <p><strong>Modo demonstração.</strong> O Supabase ainda não foi configurado neste site, então não há login: o teste e o currículo ficam salvos só neste navegador.</p>
+      <p class="hint" style="margin:0">Para ativar as contas, preencha o arquivo <code>js/supabase-config.js</code> (veja o LEIA-ME).</p>
+    </div>
+
+    <form class="panel" id="loginForm" novalidate hidden>
+      <div class="field"><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="email"><div class="err" data-for="lEmail"></div></div>
+      <div class="field"><label for="lSenha">Senha</label><input id="lSenha" type="password" autocomplete="current-password"><div class="err" data-for="lSenha"></div></div>
+      <div class="acoes"><button class="btn" type="submit" id="lBtn">Entrar</button><button type="button" class="linkbtn" id="lEsqueci">Esqueci minha senha</button></div>
+      <p class="hint" style="margin:1rem 0 0">Ainda não tem conta? <a href="#cadastro">Cadastre-se</a></p>
+      <div class="msg" id="lMsg" role="status"></div>
+    </form>
+
+    <form class="panel" id="recForm" novalidate hidden>
+      <h3>Recuperar senha</h3>
+      <p class="hint">Enviaremos um link para você criar uma nova senha.</p>
+      <div class="field"><label for="rEmail">E-mail cadastrado</label><input id="rEmail" type="email" autocomplete="email"><div class="err" data-for="rEmail"></div></div>
+      <div class="acoes"><button class="btn" type="submit" id="rBtn">Enviar link</button><button type="button" class="linkbtn" id="rVoltar">Voltar para o login</button></div>
+      <div class="msg" id="rMsg" role="status"></div>
+    </form>
+
+    <form class="panel" id="novaSenhaForm" novalidate hidden>
+      <h3>Criar nova senha</h3>
+      <div class="field"><label for="nSenha">Nova senha (mínimo 8 caracteres, com letra e número)</label><input id="nSenha" type="password" autocomplete="new-password"><div class="err" data-for="nSenha"></div></div>
+      <div class="field"><label for="nSenha2">Repita a nova senha</label><input id="nSenha2" type="password" autocomplete="new-password"><div class="err" data-for="nSenha2"></div></div>
+      <button class="btn" type="submit" id="nBtn">Salvar nova senha</button>
+      <div class="msg" id="nMsg" role="status"></div>
+    </form>
+
+    <div class="panel" id="contaPanel" hidden>
+      <h3 id="contaNome">Minha conta</h3>
+      <p class="hint" id="contaEmail"></p>
+      <div class="acoes" style="margin-top:1rem">
+        <a class="btn small" href="#curriculo">Meus currículos</a>
+        <a class="btn small ghost" href="#quiz">Fazer o teste</a>
+        <button type="button" class="btn small ghost" id="btnSair">Sair</button>
+      </div>
+      <h3 style="margin-top:1.6rem">Meus testes</h3>
+      <ul class="cv-lista" id="contaTestes"><li class="hint">Carregando…</li></ul>
+    </div>
   </div>
 </section>
 
@@ -377,7 +446,8 @@ html[data-theme="dark"] .btn.light{color:#1F1A2E}
 <!-- CURRÍCULO -->
 <section class="view" data-view="curriculo" aria-labelledby="h-cv">
   <div class="wrap">
-    <div class="view-head"><h2 id="h-cv">Currículo com nota</h2><p>Preencha à esquerda. A prévia e a nota atualizam sozinhas, e seus dados ficam só neste navegador.</p></div>
+    <div class="view-head"><h2 id="h-cv">Currículo com nota</h2><p id="cvSub">Preencha à esquerda. A prévia e a nota atualizam sozinhas.</p></div>
+    <div class="panel" id="cvConta" style="margin-bottom:1.2rem" aria-live="polite"></div>
     <div class="cv-grid">
       <form class="panel" id="cvForm" novalidate autocomplete="off">
         <div class="row">
@@ -390,8 +460,8 @@ html[data-theme="dark"] .btn.light{color:#1F1A2E}
         </div>
         <div class="field"><label for="cvCidade">Cidade e estado</label><input id="cvCidade" name="cidade"></div>
         <div class="field"><label for="cvResumo">Resumo profissional <span class="hint" id="resumoCount"></span></label><textarea id="cvResumo" name="resumo" placeholder="Quem você é, o que estuda e o que quer construir. Entre 120 e 400 caracteres."></textarea></div>
-        <div class="field"><label for="cvForm2">Formação (uma por linha)</label><textarea id="cvForm2" name="formacao" placeholder="Estética Corporal, Faculdade X, 2024 a 2026"></textarea></div>
-        <div class="field"><label for="cvExp">Experiências e projetos (um por linha)</label><textarea id="cvExp" name="exp" placeholder="Atendimento voluntário em evento da faculdade, 2025"></textarea></div>
+        <fieldset class="rep"><legend>Formação</legend><div id="formList"></div><button type="button" class="btn ghost small" id="addForm">+ Adicionar formação</button></fieldset>
+        <fieldset class="rep"><legend>Experiências e projetos</legend><p class="hint" style="margin:0 0 .5rem">Sem experiência? Use projetos da faculdade ou voluntariado.</p><div id="expList"></div><button type="button" class="btn ghost small" id="addExp">+ Adicionar experiência ou projeto</button></fieldset>
         <div class="field"><label for="cvSkills">Habilidades (separadas por vírgula, ponto e vírgula ou uma por linha)</label><textarea id="cvSkills" name="skills" placeholder="Comunicação, Excel, Trabalho em equipe"></textarea></div>
         <div class="field"><label for="cvIdiomas">Idiomas</label><input id="cvIdiomas" name="idiomas" placeholder="Inglês básico, Espanhol intermediário"></div>
         <button type="button" class="btn ghost small" id="cvClear">Limpar tudo</button>
@@ -464,9 +534,14 @@ html[data-theme="dark"] .btn.light{color:#1F1A2E}
 </footer>
 <div id="toast" role="status" aria-live="polite"></div>
 
+<!-- Supabase: biblioteca oficial + configuração + camada de serviços (Documento, seção 4.1) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/servicos.js"></script>
 <script>
 (function(){
 'use strict';
+const OP=window.OP||{ativo:false};
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -559,16 +634,23 @@ const TERMOS=[
 const views=$$('.view').map(v=>v.dataset.view);
 const ANCH=['sobre','recursos','vagas','cadastro'];
 function route(){
+  /* Link de e-mail vencido ou inválido volta com #error=...: mostra o aviso e manda para o login */
+  if((location.hash||'').startsWith('#error')){
+    const q=new URLSearchParams(location.hash.slice(1));
+    toast(/expired/i.test(q.get('error_code')||q.get('error_description')||'')?'O link expirou. Peça um novo.':'Não foi possível validar o link.');
+    history.replaceState(null,'',location.pathname+location.search+'#entrar');
+  }
   let id=(location.hash||'#inicio').slice(1).split('?')[0], anchor=null;
   if(ANCH.includes(id)){anchor=id;id='inicio'}
   if(!views.includes(id)) id='inicio';
   $$('.view').forEach(v=>v.classList.toggle('on',v.dataset.view===id));
-  const navId=anchor||(id==='inicio'?'inicio':(id==='todas-vagas'?'vagas':'recursos'));
+  const navId=anchor||(id==='inicio'?'inicio':(id==='todas-vagas'?'vagas':(id==='entrar'?'entrar':'recursos')));
   $$('nav.main a').forEach(a=>{ if(a.getAttribute('href')==='#'+navId) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
   $('#mainNav').classList.remove('open'); $('#menuBtn').setAttribute('aria-expanded','false');
   document.title=(id==='inicio'?'':$('[data-view="'+id+'"] h2')?.textContent+' · ')+'OrientaPro';
   if(id==='inicio') renderHome();
   if(id==='areas') renderAreas();
+  if(id==='entrar') renderEntrar();
   if(anchor){requestAnimationFrame(()=>{const el=document.getElementById(anchor);if(el)el.scrollIntoView()})}
   else window.scrollTo(0,0);
 }
@@ -586,7 +668,7 @@ function jobCard(j,withFav){
 /* home */
 function renderHome(){
   $('#homeJobs').innerHTML=JOBS.slice(0,3).map(j=>jobCard(j,false)).join('');
-  const p=store.get('perfil',null), r=store.get('quiz',null);
+  const p=conta?{nome:conta.nome_completo}:store.get('perfil',null), r=store.get('quiz',null);
   $('#greet').textContent=p?`Olá, ${p.nome.split(' ')[0]}. Continue de onde parou: teste, currículo, entrevista e vagas estão à sua espera.`:'Plataforma profissional desenvolvida para unir estudantes, empresas e oportunidades reais de crescimento.';
   $('#lastResult').innerHTML=r?`Seu último resultado: <strong>${esc(AREAS[r.top].n)}</strong> (${r.pct[r.top]}% de afinidade). <a href="#todas-vagas" data-filter="${r.top}">Ver vagas dessa área</a>`:'Você ainda não fez o teste. Seu resultado aparece aqui depois.';
 }
@@ -595,16 +677,29 @@ document.addEventListener('click',e=>{
   if(a){store.set('vagaArea',a.dataset.filter)}
 });
 
-/* QUIZ */
+/* QUIZ
+   QZ = perguntas em uso. Começa com as perguntas fixas (QUIZ) e, com o Supabase ativo,
+   é trocada pelas perguntas do banco (perguntas_teste + alternativas).
+   Cada alternativa sabe a área que pontua (k) e o seu id no banco (id). */
+const AREA_POR_NOME=Object.fromEntries(AK.map(k=>[AREAS[k].n,k]));
+let QZ=QUIZ.map(([q,opts])=>({q,opts:opts.map((t,i)=>({t,k:AK[i],id:null}))}));
 let qi=0, qa=[];
+function carregarPerguntasDoBanco(){
+  if(!OP.ativo) return;
+  OP.teste.carregarPerguntas().then(ps=>{
+    if(!ps.length||qi>0) return;                      /* não troca as perguntas no meio de um teste */
+    QZ=ps.map(p=>({q:p.enunciado,opts:p.alternativas.map(a=>({t:a.texto,k:AREA_POR_NOME[a.area],id:a.id_alternativa}))}));
+    renderQuiz();
+  }).catch(()=>{});                                    /* sem conexão: continua com as perguntas fixas */
+}
 function renderQuiz(){
   const box=$('#quizBox');
-  if(qi>=QUIZ.length){return renderResult()}
-  const [q,opts]=QUIZ[qi];
-  box.innerHTML=`<div class="hint">Pergunta ${qi+1} de ${QUIZ.length}</div>
-   <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${QUIZ.length}" aria-valuenow="${qi}"><div style="width:${qi/QUIZ.length*100}%"></div></div>
+  if(qi>=QZ.length){return renderResult()}
+  const {q,opts}=QZ[qi];
+  box.innerHTML=`<div class="hint">Pergunta ${qi+1} de ${QZ.length}</div>
+   <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${QZ.length}" aria-valuenow="${qi}"><div style="width:${qi/QZ.length*100}%"></div></div>
    <h3 style="font-size:1.5rem;margin-bottom:1rem" id="qq" tabindex="-1">${esc(q)}</h3>
-   ${opts.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${'ABCDE'[i]}</span>${esc(o)}</button>`).join('')}
+   ${opts.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${'ABCDE'[i]}</span>${esc(o.t)}</button>`).join('')}
    <div style="margin-top:.8rem">${qi>0?'<button class="btn ghost small" id="qBack">Voltar</button>':''}</div>`;
   $('#qq').focus({preventScroll:true});
 }
@@ -616,7 +711,7 @@ $('#quizBox').addEventListener('click',e=>{
 });
 function calcQuiz(answers){
   const s={tec:0,adm:0,cri:0,com:0,sau:0};
-  answers.forEach(i=>{s[AK[i]]++});
+  answers.forEach((i,qidx)=>{const k=QZ[qidx]&&QZ[qidx].opts[i]&&QZ[qidx].opts[i].k; if(k in s) s[k]++});
   const pct={};AK.forEach(k=>pct[k]=Math.round(s[k]/answers.length*100));
   const top=AK.slice().sort((a,b)=>s[b]-s[a]||AK.indexOf(a)-AK.indexOf(b))[0];
   return {s,pct,top};
@@ -630,7 +725,33 @@ function renderResult(){
    <div class="bars" style="margin:1.2rem 0">${order.map(k=>`<div class="bar-row ${k===top?'top':''}"><span>${esc(AREAS[k].n)}</span><div class="track"><div class="fill" style="width:${pct[k]}%"></div></div><strong>${pct[k]}%</strong></div>`).join('')}</div>
    <h3>Seus primeiros passos</h3><ol>${A.passos.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>
    <p class="hint">Este teste é um ponto de partida, não um diagnóstico. Afinidade não é destino: use como pista para explorar.</p>
-   <div style="display:flex;gap:.6rem;flex-wrap:wrap"><a class="btn" href="#todas-vagas" data-filter="${top}">Ver vagas de ${esc(A.n)}</a><a class="btn ghost" href="#areas">Conhecer as áreas</a><button class="btn ghost" id="qRestart">Refazer o teste</button></div>`;
+   <div style="display:flex;gap:.6rem;flex-wrap:wrap"><a class="btn" href="#todas-vagas" data-filter="${top}">Ver vagas de ${esc(A.n)}</a><a class="btn ghost" href="#areas">Conhecer as áreas</a><button class="btn ghost" id="qRestart">Refazer o teste</button></div>
+   <p class="msg" id="qSave" role="status"></p>`;
+  salvarTesteNaConta();
+}
+/* Grava o teste no Supabase (RPC registrar_teste). Sem login, guarda e grava depois do login. */
+function idsDasRespostas(){
+  const ids=qa.map((i,qidx)=>QZ[qidx]&&QZ[qidx].opts[i]&&QZ[qidx].opts[i].id);
+  return ids.length===QZ.length&&ids.every(Boolean)?ids:null;
+}
+function salvarTesteNaConta(){
+  const el=$('#qSave'); if(!el||!OP.ativo) return;
+  const ids=idsDasRespostas(); if(!ids) return;
+  if(!conta){
+    store.set('quizPend',ids);
+    el.className='msg';
+    el.innerHTML='Quer guardar este resultado? <a href="#entrar">Entre na sua conta</a> e ele será salvo automaticamente.';
+    return;
+  }
+  el.className='msg'; el.textContent='Salvando o resultado na sua conta…';
+  OP.teste.registrar(ids).then(r=>{
+    el.className='msg ok'; el.textContent='Resultado salvo na sua conta ('+r.area+').';
+  }).catch(e=>{el.className='msg no';el.textContent='Não foi possível salvar: '+e.message});
+}
+function gravarTestePendente(){
+  const ids=store.get('quizPend',null); if(!ids||!conta) return;
+  OP.teste.registrar(ids).then(r=>{store.set('quizPend',null);toast('Resultado do teste salvo na sua conta: '+r.area)})
+    .catch(()=>store.set('quizPend',null));   /* perguntas mudaram no banco: descarta */
 }
 
 /* ÁREAS */
@@ -671,8 +792,33 @@ window.addEventListener('hashchange',()=>{
 });
 
 /* CURRÍCULO */
-const CVF={nome:'#cvNome',cargo:'#cvCargo',email:'#cvEmail',tel:'#cvTel',cidade:'#cvCidade',resumo:'#cvResumo',formacao:'#cvForm2',exp:'#cvExp',skills:'#cvSkills',idiomas:'#cvIdiomas'};
-function cvData(){const d={};for(const k in CVF)d[k]=$(CVF[k]).value.trim();return d}
+const CVF={nome:'#cvNome',cargo:'#cvCargo',email:'#cvEmail',tel:'#cvTel',cidade:'#cvCidade',resumo:'#cvResumo',skills:'#cvSkills',idiomas:'#cvIdiomas'};
+const NIVEIS={MEDIO:'Ensino médio',TECNICO:'Técnico',SUPERIOR:'Superior',POS:'Pós-graduação',LIVRE:'Curso livre'};
+/* Formação e experiência agora são estruturadas, como nas tabelas FORMACOES e EXPERIENCIAS */
+function formItem(f={}){
+  return `<div class="rep-item" data-rep="form"><button type="button" class="linkbtn rm" data-rm aria-label="Remover formação">Remover</button>
+   <div class="row"><div class="field"><label>Curso</label><input data-k="curso" value="${esc(f.curso||'')}" placeholder="Análise e Desenvolvimento de Sistemas"></div>
+   <div class="field"><label>Instituição</label><input data-k="instituicao" value="${esc(f.instituicao||'')}" placeholder="Ceunsp"></div></div>
+   <div class="row"><div class="field"><label>Nível</label><select data-k="nivel"><option value="">Selecione</option>${Object.entries(NIVEIS).map(([v,t])=>`<option value="${v}" ${f.nivel===v?'selected':''}>${t}</option>`).join('')}</select></div>
+   <div class="field"><label>Ano de início</label><input data-k="ano_inicio" type="number" min="1950" max="2100" value="${esc(f.ano_inicio||'')}"></div>
+   <div class="field"><label>Ano de conclusão</label><input data-k="ano_fim" type="number" min="1950" max="2100" value="${esc(f.ano_fim||'')}" placeholder="vazio = cursando"></div></div></div>`;
+}
+function expItem(x={}){
+  return `<div class="rep-item" data-rep="exp"><button type="button" class="linkbtn rm" data-rm aria-label="Remover experiência">Remover</button>
+   <div class="row"><div class="field"><label>Cargo ou atividade</label><input data-k="cargo" value="${esc(x.cargo||'')}" placeholder="Auxiliar de loja / Projeto Arduino"></div>
+   <div class="field"><label>Empresa ou projeto</label><input data-k="empresa" value="${esc(x.empresa||'')}" placeholder="Nome da empresa ou da faculdade"></div></div>
+   <div class="row"><div class="field"><label>Início</label><input data-k="inicio" type="month" value="${esc(x.inicio||'')}"></div>
+   <div class="field"><label>Fim</label><input data-k="fim" type="month" value="${esc(x.fim||'')}"><span class="hint">vazio = atual</span></div></div>
+   <div class="field"><label>O que você fez</label><textarea data-k="descricao" style="min-height:70px">${esc(x.descricao||'')}</textarea></div></div>`;
+}
+function lerItens(tipo){return $$('[data-rep="'+tipo+'"]').map(el=>{const o={};$$('[data-k]',el).forEach(i=>o[i.dataset.k]=i.value.trim());return o})}
+function preencherItens(forms,exps){
+  $('#formList').innerHTML=(forms&&forms.length?forms:[{}]).map(formItem).join('');
+  $('#expList').innerHTML=(exps&&exps.length?exps:[{}]).map(expItem).join('');
+}
+const vazio=o=>Object.values(o).every(v=>!v);
+function cvData(){const d={};for(const k in CVF)d[k]=$(CVF[k]).value.trim();d.formacoes=lerItens('form').filter(o=>!vazio(o));d.experiencias=lerItens('exp').filter(o=>!vazio(o));return d}
+const mesAno=v=>v?v.split('-').reverse().join('/'):'';
 const lines=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
 const csv=s=>s.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
 const okEmail=s=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
@@ -682,8 +828,8 @@ function cvChecks(d){
    [!!d.nome && okEmail(d.email) && tel.length>=10,'Nome, e-mail válido e telefone com DDD','Preencha nome, um e-mail válido e telefone com DDD.'],
    [!!d.cargo,'Vaga que busca definida','Diga a vaga que busca: currículo sem objetivo parece genérico.'],
    [d.resumo.length>=120&&d.resumo.length<=400,'Resumo entre 120 e 400 caracteres','O resumo deve ter entre 120 e 400 caracteres ('+d.resumo.length+' agora).'],
-   [lines(d.formacao).length>=1,'Pelo menos uma formação','Inclua sua formação atual.'],
-   [lines(d.exp).length>=1,'Experiência, projeto ou voluntariado','Sem experiência? Use projetos da faculdade ou voluntariado.'],
+   [d.formacoes.some(f=>f.curso&&f.instituicao),'Pelo menos uma formação','Inclua sua formação atual (curso e instituição).'],
+   [d.experiencias.some(x=>x.cargo&&x.empresa),'Experiência, projeto ou voluntariado','Sem experiência? Use projetos da faculdade ou voluntariado.'],
    [csv(d.skills).length>=5,'Cinco ou mais habilidades','Liste ao menos 5 habilidades.'],
    [!!d.idiomas,'Idiomas informados','Informe idiomas, mesmo que seja só o nível básico.']
   ];
@@ -698,17 +844,100 @@ function renderCV(){
   const li=a=>a.length?'<ul>'+a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>':'';
   $('#cvPaper').innerHTML=`<h2>${esc(d.nome||'Seu nome')}</h2>${d.cargo?`<div class="role">${esc(d.cargo)}</div>`:''}<div class="contact">${contact||'E-mail · telefone · cidade'}</div>
    ${d.resumo?`<h3>Resumo</h3><p>${esc(d.resumo)}</p>`:''}
-   ${d.formacao?`<h3>Formação</h3>${li(lines(d.formacao))}`:''}
-   ${d.exp?`<h3>Experiências e projetos</h3>${li(lines(d.exp))}`:''}
+   ${d.formacoes.length?`<h3>Formação</h3>${li(d.formacoes.map(f=>[f.curso,f.instituicao].filter(Boolean).join(' – ')+(f.nivel?' ('+NIVEIS[f.nivel]+')':'')+(f.ano_inicio?', '+f.ano_inicio+' a '+(f.ano_fim||'cursando'):'')))}`:''}
+   ${d.experiencias.length?`<h3>Experiências e projetos</h3><ul>${d.experiencias.map(x=>`<li><strong>${esc([x.cargo,x.empresa].filter(Boolean).join(' – '))}</strong>${x.inicio?' · '+esc(mesAno(x.inicio))+' a '+esc(x.fim?mesAno(x.fim):'atual'):''}${x.descricao?'<br>'+esc(x.descricao):''}</li>`).join('')}</ul>`:''}
    ${d.skills?`<h3>Habilidades</h3><div class="chips">${csv(d.skills).map(s=>`<span>${esc(s)}</span>`).join('')}</div>`:''}
    ${d.idiomas?`<h3>Idiomas</h3><p>${esc(d.idiomas)}</p>`:''}`;
   store.set('cv',d); store.set('cvScore',score); updateTrail();
 }
 const saved=store.get('cv',null);
 if(saved)for(const k in CVF)if(saved[k]!==undefined)$(CVF[k]).value=saved[k];
+/* versão antiga guardava formação e experiência como texto (uma por linha): converte */
+const velhaF=saved&&typeof saved.formacao==='string'?lines(saved.formacao).map(l=>({curso:l})):null;
+const velhaE=saved&&typeof saved.exp==='string'?lines(saved.exp).map(l=>({cargo:l})):null;
+preencherItens(saved&&saved.formacoes||velhaF,saved&&saved.experiencias||velhaE);
 $('#cvForm').addEventListener('input',renderCV);
-$('#cvClear').addEventListener('click',()=>{if(confirm('Apagar todos os campos do currículo?')){$('#cvForm').reset();renderCV()}});
-$('#cvPrint').addEventListener('click',()=>window.print());
+$('#cvForm').addEventListener('change',renderCV);
+$('#addForm').addEventListener('click',()=>{$('#formList').insertAdjacentHTML('beforeend',formItem());$('#formList .rep-item:last-child input').focus()});
+$('#addExp').addEventListener('click',()=>{$('#expList').insertAdjacentHTML('beforeend',expItem());$('#expList .rep-item:last-child input').focus()});
+$('#cvForm').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;b.closest('.rep-item').remove();renderCV()});
+$('#cvClear').addEventListener('click',()=>{if(confirm('Apagar todos os campos do currículo?')){$('#cvForm').reset();preencherItens();cvAtual=null;store.set('cvId',null);if(conta)preencherContato();renderCV();renderCvConta()}});
+/* Impressão: copia a prévia para #printArea, fora do layout do site (corrige a 2ª página em branco) */
+$('#cvPrint').addEventListener('click',()=>{
+  let pa=$('#printArea'); if(!pa){pa=document.createElement('div');pa.id='printArea';document.body.appendChild(pa)}
+  pa.innerHTML='<div class="cv-paper">'+$('#cvPaper').innerHTML+'</div>';
+  window.print();
+});
+
+/* ---------- Currículo na conta (UC03 e UC04) ---------- */
+let cvAtual=store.get('cvId',null), cvLista=[];
+function preencherContato(){ if(!conta) return; if(!$('#cvNome').value) $('#cvNome').value=conta.nome_completo; if(!$('#cvEmail').value) $('#cvEmail').value=conta.email; }
+function validarParaSalvar(d){
+  if(!d.cargo) return 'Preencha "Vaga que busca": ela vira o título do currículo.';
+  if(!d.resumo) return 'Preencha o resumo profissional.';
+  const tel=d.tel.replace(/\D/g,''); if(tel&&(tel.length<10||tel.length>11)) return 'Telefone deve ter DDD + número (10 ou 11 dígitos).';
+  for(const f of d.formacoes){ if(!f.curso||!f.instituicao||!f.nivel||!f.ano_inicio) return 'Em cada formação, preencha curso, instituição, nível e ano de início.'; if(f.ano_fim&&+f.ano_fim<+f.ano_inicio) return 'Em uma formação, o ano de conclusão é anterior ao de início.'; }
+  for(const x of d.experiencias){ if(!x.cargo||!x.empresa||!x.inicio) return 'Em cada experiência, preencha cargo, empresa ou projeto e o mês de início.'; if(x.fim&&x.fim<x.inicio) return 'Em uma experiência, o fim é anterior ao início.'; }
+  return '';
+}
+function paraBanco(d){
+  return {id_curriculo:cvAtual, titulo:d.cargo, resumo:d.resumo, telefone:d.tel.replace(/\D/g,''), cidade:d.cidade, idiomas:d.idiomas,
+    formacoes:d.formacoes.map(f=>({instituicao:f.instituicao,curso:f.curso,nivel:f.nivel,ano_inicio:+f.ano_inicio,ano_fim:f.ano_fim?+f.ano_fim:null})),
+    experiencias:d.experiencias.map(x=>({empresa:x.empresa,cargo:x.cargo,descricao:x.descricao,data_inicio:x.inicio+'-01',data_fim:x.fim?x.fim+'-01':null})),
+    habilidades:csv(d.skills)};
+}
+function doBanco(c){
+  $('#cvCargo').value=c.titulo||''; $('#cvResumo').value=c.resumo||''; $('#cvTel').value=c.telefone||'';
+  $('#cvCidade').value=c.cidade||''; $('#cvIdiomas').value=c.idiomas||''; $('#cvSkills').value=(c.habilidades||[]).join(', ');
+  $('#cvNome').value=conta?conta.nome_completo:''; $('#cvEmail').value=conta?conta.email:'';
+  preencherItens(c.formacoes.map(f=>({curso:f.curso,instituicao:f.instituicao,nivel:f.nivel,ano_inicio:f.ano_inicio,ano_fim:f.ano_fim||''})),
+                 c.experiencias.map(x=>({cargo:x.cargo,empresa:x.empresa,descricao:x.descricao||'',inicio:(x.data_inicio||'').slice(0,7),fim:(x.data_fim||'').slice(0,7)})));
+  renderCV();
+}
+function renderCvConta(){
+  const box=$('#cvConta');
+  if(!OP.ativo){box.innerHTML='<span class="tag">Modo demonstração</span> Seu currículo fica salvo só neste navegador.';return}
+  if(!conta){box.innerHTML='<strong>Quer guardar seus currículos e enviar um PDF?</strong> <a href="#entrar">Entre na sua conta</a> ou <a href="#cadastro">crie uma</a>. Sem login, o currículo fica só neste navegador.';return}
+  const atual=cvLista.find(c=>c.id_curriculo===cvAtual);
+  box.innerHTML=`<div class="acoes" style="justify-content:space-between">
+     <span>Editando: <strong>${atual?esc(atual.titulo):'novo currículo'}</strong></span>
+     <span class="acoes"><button type="button" class="btn small" id="cvSalvar">${atual?'Salvar alterações':'Salvar na minha conta'}</button><button type="button" class="btn small ghost" id="cvNovo">Novo currículo</button></span></div>
+   <div class="msg" id="cvMsg" role="status"></div>
+   <h3 style="margin-top:1.2rem">Meus currículos</h3>
+   <ul class="cv-lista">${cvLista.length?cvLista.map(c=>`<li class="${c.id_curriculo===cvAtual?'atual':''}"><span><strong>${esc(c.titulo)}</strong> <span class="tag ${c.origem==='UPLOAD'?'amber':'mint'}">${c.origem==='UPLOAD'?'PDF':'Online'}</span> <span class="hint">${new Date(c.atualizado_em).toLocaleDateString('pt-BR')}</span></span>
+     <span class="acoes">${c.origem==='UPLOAD'?`<button type="button" class="btn small ghost" data-abrir="${c.id_curriculo}">Abrir</button>`:`<button type="button" class="btn small ghost" data-carregar="${c.id_curriculo}">Editar</button>`}<button type="button" class="linkbtn" data-excluir="${c.id_curriculo}">Excluir</button></span></li>`).join(''):'<li class="hint">Nenhum currículo salvo ainda.</li>'}</ul>
+   <h3 style="margin-top:1.2rem">Anexar currículo pronto (PDF)</h3>
+   <div class="row" style="align-items:end"><div class="field"><label for="pdfTitulo">Título</label><input id="pdfTitulo" placeholder="Ex.: Currículo – Estágio em TI"></div>
+     <div class="field"><label for="pdfArq">Arquivo PDF (até 5 MB)</label><input id="pdfArq" type="file" accept="application/pdf,.pdf"></div></div>
+   <button type="button" class="btn small" id="pdfEnviar">Enviar PDF</button>`;
+}
+function carregarListaCv(){
+  if(!OP.ativo||!conta){renderCvConta();return Promise.resolve()}
+  return OP.curriculo.listar().then(l=>{cvLista=l; if(cvAtual&&!l.some(c=>c.id_curriculo===cvAtual)){cvAtual=null;store.set('cvId',null)} renderCvConta()})
+    .catch(e=>{$('#cvConta').innerHTML='<span class="msg no">Não foi possível carregar seus currículos: '+esc(e.message)+'</span>'});
+}
+function cvMsg(txt,ok){const m=$('#cvMsg');if(m){m.className='msg '+(ok?'ok':'no');m.textContent=txt}}
+$('#cvConta').addEventListener('click',async e=>{
+  const t=e.target;
+  try{
+    if(t.id==='cvSalvar'){
+      const d=cvData(), erro=validarParaSalvar(d); if(erro) return cvMsg(erro,false);
+      t.disabled=true; cvMsg('Salvando…',true);
+      cvAtual=await OP.curriculo.salvar(paraBanco(d)); store.set('cvId',cvAtual);
+      await carregarListaCv(); cvMsg('Currículo salvo na sua conta.',true); toast('Currículo salvo');
+    }
+    if(t.id==='cvNovo'){ if(!confirm('Começar um currículo novo? O atual continua salvo na sua conta.')) return;
+      cvAtual=null; store.set('cvId',null); $('#cvForm').reset(); preencherItens(); preencherContato(); renderCV(); renderCvConta(); }
+    if(t.dataset.carregar){ const c=await OP.curriculo.carregar(+t.dataset.carregar); cvAtual=c.id_curriculo; store.set('cvId',cvAtual); doBanco(c); renderCvConta(); toast('Currículo carregado'); }
+    if(t.dataset.abrir){ const c=cvLista.find(x=>x.id_curriculo===+t.dataset.abrir); const w=window.open('','_blank'); const url=await OP.curriculo.urlPdf(c.caminho_arquivo); if(w) w.location=url; else location.href=url; }
+    if(t.dataset.excluir){ const c=cvLista.find(x=>x.id_curriculo===+t.dataset.excluir); if(!confirm('Excluir "'+c.titulo+'"? Isso não pode ser desfeito.')) return;
+      await OP.curriculo.excluir(c); if(c.id_curriculo===cvAtual){cvAtual=null;store.set('cvId',null)} await carregarListaCv(); toast('Currículo excluído'); }
+    if(t.id==='pdfEnviar'){
+      const arq=$('#pdfArq').files[0]; t.disabled=true; cvMsg('Enviando o PDF…',true);
+      await OP.curriculo.enviarPdf(arq,$('#pdfTitulo').value.trim()); await carregarListaCv(); cvMsg('PDF enviado.',true); toast('PDF enviado');
+    }
+  }catch(err){ t.disabled=false; cvMsg(err.message,false); }
+});
 
 /* ENTREVISTA */
 const eArea=$('#eArea');
@@ -770,24 +999,103 @@ $('#gq').addEventListener('input',renderTerms);
 /* CADASTRO */
 const cad=$('#cadForm');
 function setErr(id,msg){const e=$('.err[data-for="'+id+'"]');if(e)e.textContent=msg||'';const i=$('#'+id);if(i&&i.type!=='checkbox')i.classList.toggle('bad',!!msg)}
-cad.addEventListener('submit',e=>{
+const senhaForte=s=>s.length>=8&&/[A-Za-z]/.test(s)&&/\d/.test(s);
+function idade(iso){const n=new Date(iso+'T00:00:00'),h=new Date();let a=h.getFullYear()-n.getFullYear();const m=h.getMonth()-n.getMonth();if(m<0||(m===0&&h.getDate()<n.getDate()))a--;return a}
+cad.addEventListener('submit',async e=>{
   e.preventDefault();
-  const v={nome:$('#cNome').value.trim(),email:$('#cEmail').value.trim(),curso:$('#cCurso').value.trim(),periodo:$('#cPeriodo').value,senha:$('#cSenha').value,aceite:$('#cAceite').checked};
+  const v={nome:$('#cNome').value.trim(),email:$('#cEmail').value.trim(),nasc:$('#cNasc').value,senha:$('#cSenha').value,aceite:$('#cAceite').checked};
   let bad=0;
   const chk=(id,cond,msg)=>{setErr(id,cond?'':msg);if(!cond)bad++};
   chk('cNome',v.nome.split(/\s+/).filter(Boolean).length>=2,'Informe nome e sobrenome.');
   chk('cEmail',okEmail(v.email),'Informe um e-mail válido, como nome@exemplo.com.');
-  chk('cCurso',v.curso.length>=3,'Informe o nome do seu curso.');
-  chk('cPeriodo',!!v.periodo,'Selecione seu período.');
-  chk('cSenha',v.senha.length>=8&&/[A-Za-z]/.test(v.senha)&&/\d/.test(v.senha),'Use ao menos 8 caracteres, com letra e número.');
+  chk('cNasc',!!v.nasc&&idade(v.nasc)>=14&&idade(v.nasc)<120,v.nasc?'É preciso ter pelo menos 14 anos (RN03).':'Informe sua data de nascimento.');
+  chk('cSenha',senhaForte(v.senha),'Use ao menos 8 caracteres, com letra e número.');
   chk('cAceite',v.aceite,'Marque para continuar.');
   if(bad){const f=$('.bad',cad);if(f)f.focus();$('#cadOk').textContent='';return}
-  /* a senha NÃO é guardada: este protótipo não tem servidor */
-  store.set('perfil',{nome:v.nome,email:v.email,curso:v.curso,periodo:v.periodo});
-  $('#cadOk').innerHTML='<span class="tag mint">Perfil criado</span> Bem-vindo(a), '+esc(v.nome.split(' ')[0])+'. Sua senha não foi guardada, porque este protótipo não tem servidor.';
-  cad.reset(); toast('Perfil criado');
+
+  if(!OP.ativo){
+    /* modo demonstração: a senha NÃO é guardada */
+    store.set('perfil',{nome:v.nome,email:v.email,nascimento:v.nasc});
+    $('#cadOk').innerHTML='<span class="tag mint">Perfil criado</span> Bem-vindo(a), '+esc(v.nome.split(' ')[0])+'. Neste modo de demonstração a senha não é guardada.';
+    cad.reset(); toast('Perfil criado'); return;
+  }
+  /* UC01 com Supabase Auth */
+  const b=$('#cadBtn'); b.disabled=true; $('#cadOk').textContent='Criando sua conta…';
+  try{
+    const r=await OP.auth.cadastrar({nome:v.nome,email:v.email,senha:v.senha,nascimento:v.nasc});
+    cad.reset();
+    $('#cadOk').innerHTML=r.precisaConfirmar
+      ?'<span class="tag mint">Quase lá</span> Enviamos um link de confirmação para <strong>'+esc(v.email)+'</strong>. Abra o e-mail, confirme e depois <a href="#entrar">entre com sua senha</a>.'
+      :'<span class="tag mint">Conta criada</span> Você já está conectado(a).';
+  }catch(err){ $('#cadOk').innerHTML='<span class="msg no">'+esc(err.message)+'</span>'; }
+  b.disabled=false;
 });
 cad.addEventListener('input',e=>{if(e.target.id)setErr(e.target.id,'')});
+
+/* ---------- CONTA (UC02, RF03) ---------- */
+let conta=null, modoNovaSenha=false;
+function mostrar(id){['contaDemo','loginForm','recForm','novaSenhaForm','contaPanel'].forEach(x=>$('#'+x).hidden=x!==id)}
+function renderEntrar(){
+  if(!OP.ativo) return mostrar('contaDemo');
+  if(modoNovaSenha) return mostrar('novaSenhaForm');
+  if(!conta) { if($('#recForm').hidden) mostrar('loginForm'); return; }
+  mostrar('contaPanel');
+  $('#contaNome').textContent='Olá, '+conta.nome_completo.split(' ')[0];
+  $('#contaEmail').textContent=conta.email;
+  OP.teste.historico().then(h=>{
+    $('#contaTestes').innerHTML=h.length?h.map(t=>`<li><span>${esc(t.area||'')}</span><span class="hint">${new Date(t.concluido_em).toLocaleDateString('pt-BR')}</span></li>`).join(''):'<li class="hint">Você ainda não salvou nenhum teste. <a href="#quiz">Fazer agora</a></li>';
+  }).catch(()=>{$('#contaTestes').innerHTML='<li class="hint">Não foi possível carregar os testes.</li>'});
+}
+function aplicarModo(){
+  /* textos que mudam entre modo demonstração e modo com contas */
+  $('#cadIntro').textContent=OP.ativo?'Crie sua conta para salvar o resultado do teste e seus currículos.':'Crie seu perfil para personalizar as sugestões. Neste protótipo os dados ficam apenas no seu navegador.';
+  $('#cAceiteTxt').textContent=OP.ativo?'Li e aceito o termo de uso e privacidade.':'Concordo em guardar estes dados neste navegador para fins de demonstração.';
+  $('#cadBtn').textContent=OP.ativo?'Criar minha conta':'Criar meu perfil';
+  $('#cadJaTem').hidden=!OP.ativo;
+  $('#cvSub').textContent=OP.ativo?'Preencha à esquerda. A prévia e a nota atualizam sozinhas. Entre na conta para salvar.':'Preencha à esquerda. A prévia e a nota atualizam sozinhas, e seus dados ficam só neste navegador.';
+}
+async function atualizarConta(){
+  if(!OP.ativo){conta=null;renderCvConta();return}
+  try{ conta=await OP.auth.perfil(); }catch(e){ conta=null; }
+  if(conta&&conta.ativo===false){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
+  $('#navConta').textContent=conta?'Minha conta':'Entrar';
+  if(conta){ preencherContato(); gravarTestePendente(); }
+  renderEntrar(); carregarListaCv(); renderHome();
+}
+$('#loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=$('#lEmail').value.trim(), senha=$('#lSenha').value; let bad=0;
+  const chk=(id,cond,msg)=>{setErr(id,cond?'':msg);if(!cond)bad++};
+  chk('lEmail',okEmail(email),'Informe um e-mail válido.'); chk('lSenha',!!senha,'Informe a senha.');
+  if(bad) return;
+  const b=$('#lBtn'), m=$('#lMsg'); b.disabled=true; m.className='msg'; m.textContent='Entrando…';
+  try{ await OP.auth.entrar(email,senha); m.textContent=''; $('#loginForm').reset(); await atualizarConta(); toast('Bem-vindo(a) de volta'); }
+  catch(err){ m.className='msg no'; m.textContent=err.message; }
+  b.disabled=false;
+});
+$('#lEsqueci').addEventListener('click',()=>{ $('#rEmail').value=$('#lEmail').value; mostrar('recForm'); $('#rEmail').focus(); });
+$('#rVoltar').addEventListener('click',()=>mostrar('loginForm'));
+$('#recForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=$('#rEmail').value.trim(); if(!okEmail(email)) return setErr('rEmail','Informe um e-mail válido.');
+  setErr('rEmail',''); const b=$('#rBtn'), m=$('#rMsg'); b.disabled=true;
+  try{ await OP.auth.recuperarSenha(email); m.className='msg ok'; m.textContent='Se este e-mail tiver conta, você vai receber um link para criar uma nova senha.'; }
+  catch(err){ m.className='msg no'; m.textContent=err.message; }
+  b.disabled=false;
+});
+$('#novaSenhaForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const s1=$('#nSenha').value, s2=$('#nSenha2').value; let bad=0;
+  const chk=(id,cond,msg)=>{setErr(id,cond?'':msg);if(!cond)bad++};
+  chk('nSenha',senhaForte(s1),'Use ao menos 8 caracteres, com letra e número.'); chk('nSenha2',s1===s2,'As senhas não são iguais.');
+  if(bad) return;
+  const b=$('#nBtn'), m=$('#nMsg'); b.disabled=true;
+  try{ await OP.auth.definirNovaSenha(s1); modoNovaSenha=false; $('#novaSenhaForm').reset(); toast('Senha alterada'); await atualizarConta(); }
+  catch(err){ m.className='msg no'; m.textContent=err.message; }
+  b.disabled=false;
+});
+$('#btnSair').addEventListener('click',async()=>{ await OP.auth.sair(); cvAtual=null; store.set('cvId',null); await atualizarConta(); location.hash='#inicio'; toast('Você saiu da conta'); });
+['loginForm','recForm','novaSenhaForm'].forEach(id=>$('#'+id).addEventListener('input',e=>{if(e.target.id)setErr(e.target.id,'')}));
 
 /* tema claro/escuro */
 const root=document.documentElement;
@@ -796,7 +1104,23 @@ applyTheme(store.get('theme','light')==='dark'?'dark':'light');
 $('#themeBtn').addEventListener('click',()=>{const t=root.getAttribute('data-theme')==='dark'?'light':'dark';store.set('theme',t);applyTheme(t)});
 
 /* início */
-renderQuiz(); renderAreas(); renderJobs(); renderCV(); renderTrail(); renderTerms(); updateTrail(); route();
+renderQuiz(); renderAreas(); renderJobs(); renderCV(); renderTrail(); renderTerms(); updateTrail(); aplicarModo(); renderCvConta(); route();
+if(OP.ativo){
+  carregarPerguntasDoBanco();
+  OP.auth.aoMudar(evento=>{
+    if(evento==='PASSWORD_RECOVERY'){ modoNovaSenha=true; location.hash='#entrar'; renderEntrar(); return; }
+    if(evento==='SIGNED_IN'||evento==='SIGNED_OUT'||evento==='USER_UPDATED') atualizarConta();
+  });
+  /* O Supabase troca o ?code= do link de e-mail por uma sessão; depois limpamos a URL */
+  OP.auth.usuario().then(()=>{
+    const q=new URLSearchParams(location.search);
+    if(q.has('code')||q.has('error')){
+      if(q.has('error')) toast('Não foi possível validar o link. Peça um novo.');
+      history.replaceState(null,'',location.pathname+location.hash);
+    }
+    atualizarConta();
+  });
+}
 })();
 </script>
 </body>
