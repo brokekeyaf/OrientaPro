@@ -34,6 +34,7 @@ window.OP = (function () {
     if (/fk_candidaturas_curriculo/.test(m)) return 'Este currículo foi usado em uma candidatura e não pode ser excluído.';
     if (/exceeded the maximum allowed size|Payload too large|413/i.test(m)) return 'O PDF passa de 5 MB (RN04).';
     if (/mime type|invalid_mime_type/i.test(m)) return 'Envie apenas arquivos PDF (RN04).';
+    if (/desafios_area/.test(m) && /does not exist|not find|schema cache/i.test(m)) return 'A tabela de desafios ainda não existe. Rode o arquivo supabase/006 no SQL Editor.';
     if (/Failed to fetch|NetworkError/i.test(m)) return 'Sem conexão com o servidor. Verifique a internet e tente de novo.';
     return m || 'Algo deu errado. Tente de novo.';
   }
@@ -216,5 +217,28 @@ window.OP = (function () {
     }
   };
 
-  return { ativo, sb, auth, teste, curriculo, traduzir };
+  /* ================= DESAFIO DE 1 HORA (RF19) ================= */
+  const desafio = {
+    // Uma avaliação por área: refazer o desafio atualiza a nota (upsert).
+    async salvar({ area, nota, anotacao, passos }) {
+      const u = await auth.usuario();
+      if (!u) throw new Error('Faça login para salvar na sua conta.');
+      const a = (await areas()).find(x => x.nome === area);
+      if (!a) throw new Error('Área não encontrada no banco.');
+      const { error } = await sb.from('desafios_area').upsert({
+        id_usuario: u.id, id_area: a.id_area, nota, anotacao: anotacao || null,
+        passos_concluidos: passos || 0, concluido_em: new Date().toISOString()
+      }, { onConflict: 'id_usuario,id_area' });
+      if (error) falhar(error);
+    },
+    async listar() {
+      const nomeArea = Object.fromEntries((await areas()).map(a => [a.id_area, a.nome]));
+      const { data, error } = await sb.from('desafios_area')
+        .select('id_area, nota, anotacao, passos_concluidos, concluido_em');
+      if (error) falhar(error);
+      return data.map(d => ({ ...d, area: nomeArea[d.id_area] }));
+    }
+  };
+
+  return { ativo, sb, auth, teste, curriculo, desafio, traduzir };
 })();
