@@ -268,6 +268,22 @@ fieldset.rep legend{font-weight:600;font-size:.92rem;margin-bottom:.4rem;padding
 .cv-lista li.atual strong::after{content:" (editando)";font-weight:400;color:var(--ink-2)}
 details.termo{margin:.2rem 0 .8rem;font-size:.92rem;color:var(--ink-2)}
 details.termo summary{cursor:pointer;color:var(--link)}
+
+/* ===== Teste dinâmico e desafio de 1 hora ===== */
+.q-extra{display:inline-block;margin-bottom:.6rem}
+.passos{list-style:none;margin:0;padding:0;counter-reset:passo}
+.passos li{display:flex;gap:.8rem;align-items:flex-start;padding:.8rem 0;border-top:1px solid var(--line)}
+.passos li:first-child{border-top:0}
+.passos input{width:22px;height:22px;min-height:0;flex:none;margin-top:.15rem}
+.passos .txt{flex:1}
+.passos a{font-weight:600}
+.passos li.feito .txt{color:var(--ink-2);text-decoration:line-through}
+.notas{display:flex;gap:.5rem;flex-wrap:wrap;margin:.4rem 0 1rem}
+.notas button{min-width:52px;min-height:48px;border-radius:var(--r-md);border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:700 1.1rem var(--body);cursor:pointer}
+.notas button[aria-pressed="true"]{background:var(--purple-2,#8426B0);border-color:transparent;color:#fff}
+.notas-leg{display:flex;justify-content:space-between;max-width:300px;font-size:.85rem;color:var(--ink-2)}
+.des-grid{display:grid;gap:1.2rem}
+.timer.big{font-size:3rem}
 </style>
 </head>
 <body>
@@ -407,8 +423,16 @@ details.termo summary{cursor:pointer;color:var(--link)}
 <!-- QUIZ -->
 <section class="view" data-view="quiz" aria-labelledby="h-quiz">
   <div class="wrap" style="max-width:820px">
-    <div class="view-head"><h2 id="h-quiz">Teste de perfil profissional</h2><p>Escolha a resposta que mais parece com você. Não existe resposta certa.</p></div>
+    <div class="view-head"><h2 id="h-quiz">Teste de perfil profissional</h2><p>Escolha a resposta que mais parece com você. Não existe resposta certa. As perguntas são sorteadas a cada teste e, se você ficar dividido(a) entre duas áreas, aparece uma pergunta extra de desempate.</p></div>
     <div class="panel" id="quizBox"></div>
+  </div>
+</section>
+
+<!-- DESAFIO DE 1 HORA (RF19) -->
+<section class="view" data-view="desafio" aria-labelledby="h-des">
+  <div class="wrap" style="max-width:860px">
+    <div class="view-head"><h2 id="h-des">Desafio de 1 hora</h2><p>Experimente uma área na prática antes de decidir. Siga os passos no seu ritmo: o cronômetro é só uma referência, não precisa terminar tudo.</p></div>
+    <div id="desBox"></div>
   </div>
 </section>
 
@@ -574,8 +598,49 @@ const QUIZ=[
  ['Um cliente está insatisfeito. O que você faz?',['Investigo a causa do erro','Reviso o processo e o prazo prometido','Proponho uma solução nova e criativa','Escuto com calma e negocio','Acolho e entendo como ele se sente']],
  ['Qual ambiente de trabalho você prefere?',['Focado, com autonomia e tela','Escritório organizado, com metas claras','Estúdio livre para criar','Movimentado, com muita gente','Atendimento próximo, pessoa a pessoa']],
  ['O que mais te incomoda?',['Coisas que funcionam mal sem motivo','Bagunça e falta de planejamento','Tudo igual e sem criatividade','Ficar isolado sem conversar','Ver alguém sem atenção ou cuidado']],
- ['Qual projeto de faculdade você escolheria?',['Um aplicativo ou sistema','Um plano de negócio','Uma campanha ou identidade visual','Um evento ou podcast','Um programa de bem-estar para a comunidade']]
+ ['Qual projeto de faculdade você escolheria?',['Um aplicativo ou sistema','Um plano de negócio','Uma campanha ou identidade visual','Um evento ou podcast','Um programa de bem-estar para a comunidade']],
+ ['Numa festa ou evento, onde você se imagina?',['Cuidando do som, das luzes e dos equipamentos','Controlando a lista, o orçamento e os horários','Decorando e pensando no visual','Recebendo e conversando com os convidados','Garantindo que todo mundo esteja bem e confortável']],
+ ['Que tipo de vídeo você mais assiste?',['Tecnologia, games ou lançamentos de aparelhos','Finanças, empreendedorismo ou negócios','Arte, design, moda ou edição','Entrevistas, podcasts ou debates','Saúde, beleza, treino ou autocuidado']],
+ ['Um amigo pede ajuda. Qual pedido você resolve mais rápido?',['Consertar o celular ou o computador','Organizar as contas do mês','Criar a arte do perfil ou do negócio dele','Escrever uma mensagem difícil ou ensaiar uma conversa','Indicar um cuidado para a pele, o corpo ou o bem-estar']],
+ ['Na escola, em qual atividade você se saía melhor?',['Exercícios de lógica e cálculo','Planejar o trabalho em grupo e dividir as tarefas','Cartazes, maquetes e apresentações visuais','Seminários e debates','Aulas sobre o corpo humano, biologia ou educação física']],
+ ['Se ganhasse um dia livre para aprender algo, você escolheria…',['Programar um joguinho','Montar um pequeno negócio online','Editar fotos e vídeos','Um curso de oratória','Um curso de primeiros socorros ou de massagem']],
+ ['Qual frase mais parece com você?',['Gosto de entender como as coisas funcionam por dentro','Gosto de listas, metas e tudo no lugar','Gosto de deixar tudo mais bonito','Gosto de conversar e conhecer gente nova','Gosto de ajudar as pessoas a se sentirem bem']],
+ ['Numa loja, que função você escolheria?',['Cuidar do sistema e do site','Cuidar do estoque e do caixa','Montar a vitrine e as redes sociais','Atender e vender para os clientes','Orientar clientes sobre produtos de cuidado pessoal']],
+ ['O que te deixa orgulhoso(a) no fim do dia?',['Ter resolvido um problema difícil','Ter terminado tudo o que estava planejado','Ver pronto algo que eu criei','Ter convencido ou ajudado alguém numa boa conversa','Ver alguém melhor por causa do meu cuidado']],
+ ['Como você prefere trabalhar?',['Concentrado(a), com fone e sem interrupções','Com rotina e processos claros','Com liberdade para experimentar','Em equipe, falando com muita gente','Perto das pessoas, atendendo uma de cada vez']],
+ ['Qual ferramenta você gostaria de dominar?',['Uma linguagem de programação','Planilhas e sistemas de gestão','Canva, Photoshop ou um editor de vídeo','Microfone e câmera, para apresentar e gravar','Equipamentos e técnicas de estética ou saúde']],
+ ['Quando algo dá errado num grupo, você…',['Procura a causa técnica do problema','Refaz o plano e redistribui as tarefas','Sugere um jeito diferente de fazer','Conversa com todos para acalmar e alinhar','Cuida de quem ficou mais abalado']],
+ ['Qual notícia chamaria mais a sua atenção?',['Nova inteligência artificial é lançada','Empresa de jovens fatura milhões','Campanha criativa viraliza nas redes','Entrevista com um grande comunicador','Nova técnica de cuidado com a saúde e a pele']]
 ];
+
+/* Desafio de 1 hora por área (RF19). Links verificados em 25/09/2026: conferir antes de apresentar. */
+const DESAFIOS={
+ tec:{titulo:'Monte uma página sobre você',pergunta:'Você gostou de ver o código virar uma página?',passos:[
+  {t:'Assista às 2 primeiras aulas do curso gratuito de HTML5 e CSS3 do Curso em Vídeo (cerca de 30 minutos).',u:'https://www.youtube.com/playlist?list=PLHz_AreHm4dkZ9-atkcmcBaMZdmLHft8n',l:'Abrir a playlist'},
+  {t:'Abra o CodePen, que é gratuito e roda no navegador, e crie um "Pen" novo.',u:'https://codepen.io/pen/',l:'Abrir o CodePen'},
+  {t:'No HTML, escreva seu nome num título, um parágrafo sobre você e uma lista com 3 coisas de que você gosta.'},
+  {t:'No CSS, mude a cor do fundo e a fonte. Tire um print do resultado para guardar.'}]},
+ adm:{titulo:'Organize os gastos do mês numa planilha',pergunta:'Você curtiu organizar e ver os números fecharem?',passos:[
+  {t:'Abra uma planilha nova no Google Planilhas (precisa de uma conta Google).',u:'https://sheets.new',l:'Abrir planilha nova'},
+  {t:'Crie as colunas Data, Descrição, Categoria e Valor e lance pelo menos 10 gastos, reais ou inventados.'},
+  {t:'Calcule o total com =SOMA() e o total de cada categoria com =SOMASE().'},
+  {t:'Travou em alguma fórmula? Veja as primeiras aulas do curso gratuito Excel na Prática, da Fundação Bradesco.',u:'https://www.ev.org.br/cursos/excel-na-pratica',l:'Ver o curso'}]},
+ cri:{titulo:'Refaça o cartaz de um evento',pergunta:'Você perdeu a noção do tempo criando?',passos:[
+  {t:'Escolha um evento real da sua faculdade, escola ou bairro.'},
+  {t:'Entre no Canva (a versão gratuita basta) e abra um modelo de cartaz.',u:'https://www.canva.com/',l:'Abrir o Canva'},
+  {t:'Refaça o cartaz com título, data, local e uma imagem. Use no máximo 2 fontes e 3 cores.'},
+  {t:'Quer dicas? Veja um curso rápido na Escola Criativa do Canva e compare com o seu cartaz.',u:'https://www.canva.com/pt_br/design-school/',l:'Abrir a Escola Criativa'}]},
+ com:{titulo:'Explique o seu curso em 1 minuto',pergunta:'Você gostou de falar e de se comunicar?',passos:[
+  {t:'Escreva em tópicos o que é o seu curso, o que você aprende e por que escolheu.'},
+  {t:'Grave no celular um áudio de 1 minuto explicando o curso para alguém que não o conhece.'},
+  {t:'Ouça a gravação, anote 2 coisas para melhorar e grave de novo.'},
+  {t:'Para ir além, conheça o curso gratuito Comunicação Empresarial, da Fundação Bradesco.',u:'https://www.ev.org.br/cursos/comunicacao-empresarial',l:'Ver o curso'}]},
+ sau:{titulo:'Conheça a rotina de cuidado com o cliente',pergunta:'Você se imagina cuidando de pessoas no dia a dia?',passos:[
+  {t:'Entre no AVASUS, plataforma gratuita de cursos de saúde, e procure um curso sobre biossegurança ou atendimento.',u:'https://avasus.ufrn.br/',l:'Abrir o AVASUS'},
+  {t:'Assista à primeira aula ou leia o primeiro módulo (cerca de 30 minutos).'},
+  {t:'Escreva o passo a passo de como você receberia um cliente: acolhida, higiene, explicação do procedimento e cuidados depois.'},
+  {t:'Se puder, converse com alguém que trabalha em clínica, spa ou salão e compare com o que você escreveu.'}]}
+};
 
 const JOBS=[
  {id:1,t:'Estagiário(a) de suporte técnico',e:'Nimbo Sistemas',a:'tec',n:'Estágio',m:'Híbrido',c:'São Paulo, SP',r:'Cursando TI ou áreas afins, noções de redes e Windows.'},
@@ -605,7 +670,7 @@ const ENT_TIPOS={geral:'Perguntas gerais',comp:'Comportamentais',tec:'Tecnologia
 const STAR=['Contei a situação em poucas frases','Expliquei qual era meu papel','Descrevi o que eu fiz, não só o que o grupo fez','Mostrei o resultado, de preferência com número','Fui objetivo(a) e terminei em até 2 minutos'];
 
 const TRILHA=[
- {t:'Descobrir',i:['Fazer o teste de perfil','Ler 5 termos do glossário','Conversar com alguém que trabalha na área que te interessa']},
+ {t:'Descobrir',i:['Fazer o teste de perfil','Ler 5 termos do glossário','Conversar com alguém que trabalha na área que te interessa','Fazer um desafio de 1 hora e avaliar a área']},
  {t:'Preparar',i:['Criar o currículo e chegar a 80 pontos','Atualizar ou criar o perfil no LinkedIn','Pedir a um professor que revise seu currículo','Separar 2 exemplos de trabalhos ou projetos']},
  {t:'Praticar',i:['Responder 5 perguntas no simulador','Gravar a resposta de "Fale sobre você"','Fazer uma entrevista simulada com um colega']},
  {t:'Candidatar',i:['Favoritar 5 vagas','Adaptar o currículo para cada vaga','Enviar 3 candidaturas','Anotar retornos e aprender com os "nãos"']}
@@ -651,6 +716,7 @@ function route(){
   if(id==='inicio') renderHome();
   if(id==='areas') renderAreas();
   if(id==='entrar') renderEntrar();
+  if(id==='desafio') renderDesafio();
   if(anchor){requestAnimationFrame(()=>{const el=document.getElementById(anchor);if(el)el.scrollIntoView()})}
   else window.scrollTo(0,0);
 }
@@ -675,29 +741,55 @@ function renderHome(){
 document.addEventListener('click',e=>{
   const a=e.target.closest('a[data-filter]');
   if(a){store.set('vagaArea',a.dataset.filter)}
+  const d=e.target.closest('a[data-desafio]');
+  if(d){store.set('desafioArea',d.dataset.desafio); if(location.hash==='#desafio') renderDesafio()}
 });
 
-/* QUIZ
-   QZ = perguntas em uso. Começa com as perguntas fixas (QUIZ) e, com o Supabase ativo,
-   é trocada pelas perguntas do banco (perguntas_teste + alternativas).
-   Cada alternativa sabe a área que pontua (k) e o seu id no banco (id). */
+/* QUIZ DINÂMICO
+   BANCO = todas as perguntas (fixas do site ou, com o Supabase ativo, as do banco).
+   A cada teste: sorteia POR_TESTE perguntas, embaralha as alternativas e, se duas
+   ou mais áreas empatarem no fim, faz até MAX_DESEMPATE perguntas extras só com
+   as áreas empatadas. Cada alternativa sabe a área que pontua (k) e o id no banco (id). */
 const AREA_POR_NOME=Object.fromEntries(AK.map(k=>[AREAS[k].n,k]));
-let QZ=QUIZ.map(([q,opts])=>({q,opts:opts.map((t,i)=>({t,k:AK[i],id:null}))}));
-let qi=0, qa=[];
+const POR_TESTE=8, MAX_DESEMPATE=2;
+let BANCO=QUIZ.map(([q,opts])=>({q,opts:opts.map((t,i)=>({t,k:AK[i],id:null}))}));
+let QZ=[], qi=0, qa=[];
+const embaralhar=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function novoTeste(){
+  QZ=embaralhar(BANCO).slice(0,POR_TESTE).map(p=>({q:p.q,opts:embaralhar(p.opts),orig:p}));
+  qi=0; qa=[];
+}
+novoTeste();
 function carregarPerguntasDoBanco(){
   if(!OP.ativo) return;
   OP.teste.carregarPerguntas().then(ps=>{
-    if(!ps.length||qi>0) return;                      /* não troca as perguntas no meio de um teste */
-    QZ=ps.map(p=>({q:p.enunciado,opts:p.alternativas.map(a=>({t:a.texto,k:AREA_POR_NOME[a.area],id:a.id_alternativa}))}));
-    renderQuiz();
-  }).catch(()=>{});                                    /* sem conexão: continua com as perguntas fixas */
+    if(!ps.length) return;
+    BANCO=ps.map(p=>({q:p.enunciado,opts:p.alternativas.map(a=>({t:a.texto,k:AREA_POR_NOME[a.area],id:a.id_alternativa})).filter(o=>o.k)}));
+    if(qi===0){novoTeste();renderQuiz()}              /* não troca as perguntas no meio de um teste */
+  }).catch(()=>{});                                    /* sem conexão: continua com as perguntas do site */
 }
+function pontos(answers){const s={};AK.forEach(k=>s[k]=0);answers.forEach(o=>{if(o&&o.k in s)s[o.k]++});return s}
+function empatadas(answers){const s=pontos(answers),max=Math.max(...AK.map(k=>s[k]));return AK.filter(k=>s[k]===max)}
+function perguntaDesempate(emp){
+  const usadas=new Set(QZ.map(x=>x.orig));
+  const livres=embaralhar(BANCO.filter(p=>!usadas.has(p)));
+  for(const p of livres){const opts=p.opts.filter(o=>emp.includes(o.k)); if(opts.length>=2) return {q:p.q,opts:embaralhar(opts),orig:p,desempate:emp}}
+  return null;
+}
+/* “A” e “B”; “A”, “B” e “C” (aspas porque há áreas com “e” no nome) */
+const nomes=ks=>{const n=ks.map(k=>'“'+AREAS[k].n+'”');return n.length<2?n.join(''):n.slice(0,-1).join(', ')+' e '+n[n.length-1]};
 function renderQuiz(){
   const box=$('#quizBox');
-  if(qi>=QZ.length){return renderResult()}
-  const {q,opts}=QZ[qi];
-  box.innerHTML=`<div class="hint">Pergunta ${qi+1} de ${QZ.length}</div>
-   <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${QZ.length}" aria-valuenow="${qi}"><div style="width:${qi/QZ.length*100}%"></div></div>
+  if(qi>=QZ.length){
+    const emp=empatadas(qa), extras=QZ.length-POR_TESTE;
+    const d=emp.length>1&&extras<MAX_DESEMPATE?perguntaDesempate(emp):null;
+    if(!d) return renderResult();
+    QZ.push(d);
+  }
+  const {q,opts,desempate}=QZ[qi];
+  const total=Math.min(QZ.length,POR_TESTE), num=Math.min(qi+1,POR_TESTE);
+  box.innerHTML=`${desempate?`<span class="tag amber q-extra">Pergunta extra de desempate</span><p class="hint" style="margin:0 0 .6rem">Você ficou dividido(a) entre ${esc(nomes(desempate))}. Esta pergunta ajuda a decidir.</p>`:`<div class="hint">Pergunta ${num} de ${total}</div>`}
+   <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${Math.min(qi,total)}"><div style="width:${Math.min(qi/total,1)*100}%"></div></div>
    <h3 style="font-size:1.5rem;margin-bottom:1rem" id="qq" tabindex="-1">${esc(q)}</h3>
    ${opts.map((o,i)=>`<button class="opt" data-i="${i}"><span class="k">${'ABCDE'[i]}</span>${esc(o.t)}</button>`).join('')}
    <div style="margin-top:.8rem">${qi>0?'<button class="btn ghost small" id="qBack">Voltar</button>':''}</div>`;
@@ -705,33 +797,37 @@ function renderQuiz(){
 }
 $('#quizBox').addEventListener('click',e=>{
   const o=e.target.closest('.opt');
-  if(o){qa[qi]=+o.dataset.i;qi++;renderQuiz();return}
-  if(e.target.id==='qBack'){qi=Math.max(0,qi-1);renderQuiz()}
-  if(e.target.id==='qRestart'){qi=0;qa=[];renderQuiz()}
+  if(o){qa[qi]=QZ[qi].opts[+o.dataset.i];qi++;renderQuiz();return}
+  if(e.target.id==='qBack'){
+    qi=Math.max(0,qi-1);
+    QZ=QZ.slice(0,Math.max(POR_TESTE,qi+1)); qa=qa.slice(0,qi);   /* desempates são refeitos se preciso */
+    renderQuiz();
+  }
+  if(e.target.id==='qRestart'){novoTeste();renderQuiz()}
 });
 function calcQuiz(answers){
-  const s={tec:0,adm:0,cri:0,com:0,sau:0};
-  answers.forEach((i,qidx)=>{const k=QZ[qidx]&&QZ[qidx].opts[i]&&QZ[qidx].opts[i].k; if(k in s) s[k]++});
+  const s=pontos(answers);
   const pct={};AK.forEach(k=>pct[k]=Math.round(s[k]/answers.length*100));
-  const top=AK.slice().sort((a,b)=>s[b]-s[a]||AK.indexOf(a)-AK.indexOf(b))[0];
-  return {s,pct,top};
+  const emp=empatadas(answers);
+  return {s,pct,top:emp[0],emp};
 }
 function renderResult(){
-  const {pct,top}=calcQuiz(qa);
+  const {pct,top,emp}=calcQuiz(qa);
   store.set('quiz',{pct,top}); updateTrail();
   const order=AK.slice().sort((a,b)=>pct[b]-pct[a]);
   const A=AREAS[top];
-  $('#quizBox').innerHTML=`<h3 style="font-size:1.6rem">Sua maior afinidade: ${esc(A.n)}</h3><p>${esc(A.d)}</p>
-   <div class="bars" style="margin:1.2rem 0">${order.map(k=>`<div class="bar-row ${k===top?'top':''}"><span>${esc(AREAS[k].n)}</span><div class="track"><div class="fill" style="width:${pct[k]}%"></div></div><strong>${pct[k]}%</strong></div>`).join('')}</div>
+  const titulo=emp.length>1?`Você ficou dividido(a) entre ${esc(nomes(emp))}`:`Sua maior afinidade: ${esc(A.n)}`;
+  $('#quizBox').innerHTML=`<h3 style="font-size:1.6rem">${titulo}</h3><p>${emp.length>1?'Suas respostas pesaram igual para essas áreas. Faça o desafio de 1 hora de cada uma para sentir qual combina mais.':esc(A.d)}</p>
+   <div class="bars" style="margin:1.2rem 0">${order.map(k=>`<div class="bar-row ${emp.includes(k)?'top':''}"><span>${esc(AREAS[k].n)}</span><div class="track"><div class="fill" style="width:${pct[k]}%"></div></div><strong>${pct[k]}%</strong></div>`).join('')}</div>
    <h3>Seus primeiros passos</h3><ol>${A.passos.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>
    <p class="hint">Este teste é um ponto de partida, não um diagnóstico. Afinidade não é destino: use como pista para explorar.</p>
-   <div style="display:flex;gap:.6rem;flex-wrap:wrap"><a class="btn" href="#todas-vagas" data-filter="${top}">Ver vagas de ${esc(A.n)}</a><a class="btn ghost" href="#areas">Conhecer as áreas</a><button class="btn ghost" id="qRestart">Refazer o teste</button></div>
+   <div style="display:flex;gap:.6rem;flex-wrap:wrap"><a class="btn" href="#desafio" data-desafio="${top}">Fazer o desafio de 1 hora de ${esc(A.n)}</a><a class="btn ghost" href="#todas-vagas" data-filter="${top}">Ver vagas</a><button class="btn ghost" id="qRestart">Refazer com outras perguntas</button></div>
    <p class="msg" id="qSave" role="status"></p>`;
   salvarTesteNaConta();
 }
 /* Grava o teste no Supabase (RPC registrar_teste). Sem login, guarda e grava depois do login. */
 function idsDasRespostas(){
-  const ids=qa.map((i,qidx)=>QZ[qidx]&&QZ[qidx].opts[i]&&QZ[qidx].opts[i].id);
+  const ids=qa.map(o=>o&&o.id);
   return ids.length===QZ.length&&ids.every(Boolean)?ids:null;
 }
 function salvarTesteNaConta(){
@@ -756,13 +852,14 @@ function gravarTestePendente(){
 
 /* ÁREAS */
 function renderAreas(){
-  const r=store.get('quiz',null);
+  const r=store.get('quiz',null), des=store.get('desafios',{});
   $('#areaList').innerHTML=AK.map(k=>{const A=AREAS[k];return `<article class="job" style="${r&&r.top===k?'border:2px solid var(--mint)':''}">
    ${r&&r.top===k?'<span class="tag mint" style="align-self:flex-start">Sua maior afinidade</span>':''}
    <h3>${esc(A.n)}</h3><p style="margin:0"><strong>No dia a dia:</strong> ${esc(A.dia)}</p>
    <div><strong>Cargos de entrada</strong><ul style="margin:.2rem 0;padding-left:1.1rem">${A.cargos.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>
-   <p style="margin:0"><strong>Teste de 1 hora:</strong> ${esc(A.teste)}</p>
-   <div class="actions"><a class="btn small" href="#todas-vagas" data-filter="${k}">Ver vagas</a></div></article>`}).join('');
+   <p style="margin:0"><strong>Desafio de 1 hora:</strong> ${esc(DESAFIOS[k].titulo)}.</p>
+   ${des[k]&&des[k].nota?`<span class="tag amber" style="align-self:flex-start">Você deu nota ${des[k].nota}/5 no desafio</span>`:''}
+   <div class="actions"><a class="btn small" href="#desafio" data-desafio="${k}">${des[k]&&des[k].nota?'Refazer o desafio':'Fazer o desafio'}</a><a class="btn small ghost" href="#todas-vagas" data-filter="${k}">Ver vagas</a></div></article>`}).join('');
 }
 
 /* VAGAS */
@@ -939,6 +1036,84 @@ $('#cvConta').addEventListener('click',async e=>{
   }catch(err){ t.disabled=false; cvMsg(err.message,false); }
 });
 
+/* DESAFIO DE 1 HORA (RF19) */
+let dSec=3600, dTick=null;
+function desArea(){const k=store.get('desafioArea','')||(store.get('quiz',null)||{}).top||'tec';return DESAFIOS[k]?k:'tec'}
+function dMostra(){const t=$('#dTimer');if(!t)return;t.textContent=fmt(Math.max(dSec,0));const b=$('#dStart');if(b)b.textContent=dTick?'Pausar':(dSec<3600&&dSec>0?'Continuar':'Iniciar')}
+function dPara(){clearInterval(dTick);dTick=null;dMostra()}
+function renderDesafio(){
+  const k=desArea(), D=DESAFIOS[k], salvo=(store.get('desafios',{})[k])||{}, feitos=salvo.passos||[];
+  $('#desBox').innerHTML=`<div class="des-grid">
+   <div class="panel">
+     <label for="dArea">Área</label>
+     <select id="dArea" style="max-width:360px;margin-bottom:1rem">${AK.map(a=>`<option value="${a}" ${a===k?'selected':''}>${esc(AREAS[a].n)}</option>`).join('')}</select>
+     <h3 style="font-size:1.5rem">${esc(D.titulo)}</h3>
+     <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:.6rem">
+       <div class="timer big" id="dTimer" role="timer" aria-label="Tempo restante do desafio">60:00</div>
+       <button class="btn small" id="dStart" type="button">Iniciar</button>
+       <button class="btn ghost small" id="dReset" type="button">Zerar</button>
+     </div>
+   </div>
+   <div class="panel">
+     <h3>Passo a passo</h3>
+     <ol class="passos">${D.passos.map((p,i)=>`<li class="${feitos[i]?'feito':''}"><input type="checkbox" id="dp${i}" data-passo="${i}" ${feitos[i]?'checked':''}><div class="txt"><label for="dp${i}" style="font-weight:400;display:inline">${esc(p.t)}</label>${p.u?`<br><a href="${esc(p.u)}" target="_blank" rel="noopener">${esc(p.l)} ↗</a>`:''}</div></li>`).join('')}</ol>
+     <p class="hint" style="margin:.6rem 0 0">Os links abrem sites externos e gratuitos. O OrientaPro não tem ligação com eles.</p>
+   </div>
+   <div class="panel">
+     <h3>${esc(D.pergunta)}</h3>
+     <div class="notas" role="group" aria-label="Nota de 1 a 5">${[1,2,3,4,5].map(n=>`<button type="button" data-nota="${n}" aria-pressed="${salvo.nota===n}">${n}</button>`).join('')}</div>
+     <div class="notas-leg"><span>1 = não curti</span><span>5 = amei</span></div>
+     <div class="field" style="margin-top:1rem"><label for="dNota">O que você achou? (opcional)</label><textarea id="dNota" maxlength="1000" placeholder="O que foi fácil, o que foi difícil, o que te surpreendeu">${esc(salvo.anotacao||'')}</textarea></div>
+     <button class="btn" type="button" id="dSalvar">Salvar minha avaliação</button>
+     <div class="msg" id="dMsg" role="status"></div>
+     <div id="dProx" style="margin-top:1rem">${salvo.nota?proximoPasso(k,salvo.nota):''}</div>
+   </div></div>`;
+  dMostra();
+}
+function proximoPasso(k,nota){
+  const n=esc(AREAS[k].n);
+  if(nota>=4) return `<p><strong>${n} parece combinar com você.</strong> Próximos passos:</p><div class="acoes"><a class="btn small" href="#curriculo">Montar o currículo</a><a class="btn small ghost" href="#todas-vagas" data-filter="${k}">Ver vagas de ${n}</a></div>`;
+  if(nota<=2) return `<p><strong>Tudo bem descartar ${n}.</strong> Saber o que você não quer também é um avanço. Que tal experimentar outra área?</p><a class="btn small ghost" href="#areas">Escolher outra área</a>`;
+  return `<p><strong>Ficou em dúvida?</strong> Compare com o desafio de outra área e veja qual te animou mais.</p><a class="btn small ghost" href="#areas">Ver outras áreas</a>`;
+}
+$('#desBox').addEventListener('change',e=>{
+  if(e.target.id==='dArea'){dPara();dSec=3600;store.set('desafioArea',e.target.value);renderDesafio();return}
+  const i=e.target.dataset.passo; if(i===undefined) return;
+  const k=desArea(), all=store.get('desafios',{}), d=all[k]||{}; d.passos=d.passos||[]; d.passos[+i]=e.target.checked; all[k]=d; store.set('desafios',all);
+  e.target.closest('li').classList.toggle('feito',e.target.checked);
+});
+$('#desBox').addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.id==='dStart'){
+    if(dTick){dPara();return}
+    if(dSec<=0) dSec=3600;
+    dTick=setInterval(()=>{dSec--;dMostra();if(dSec<=0){dPara();toast('Uma hora! Hora de avaliar o desafio.')}},1000); dMostra(); return;
+  }
+  if(t.id==='dReset'){dPara();dSec=3600;dMostra();return}
+  if(t.dataset.nota){$$('.notas button').forEach(b=>b.setAttribute('aria-pressed',b===t));return}
+  if(t.id==='dSalvar'){
+    const sel=$('.notas button[aria-pressed="true"]'), m=$('#dMsg');
+    if(!sel){m.className='msg no';m.textContent='Escolha uma nota de 1 a 5.';return}
+    const k=desArea(), nota=+sel.dataset.nota, anotacao=$('#dNota').value.trim();
+    const all=store.get('desafios',{}), d=all[k]||{}; Object.assign(d,{nota,anotacao,data:new Date().toISOString()}); all[k]=d; store.set('desafios',all);
+    $('#dProx').innerHTML=proximoPasso(k,nota); updateTrail(); renderAreas();
+    if(OP.ativo&&conta){
+      m.className='msg'; m.textContent='Salvando na sua conta…'; t.disabled=true;
+      try{ await OP.desafio.salvar({area:AREAS[k].n,nota,anotacao,passos:(d.passos||[]).filter(Boolean).length}); m.className='msg ok'; m.textContent='Avaliação salva na sua conta.'; }
+      catch(err){ m.className='msg no'; m.textContent='Salvo neste navegador, mas não na conta: '+err.message; }
+      t.disabled=false;
+    } else { m.className='msg ok'; m.textContent=OP.ativo?'Avaliação salva neste navegador. Entre na sua conta para guardar de vez.':'Avaliação salva neste navegador.'; }
+  }
+});
+function carregarDesafiosDaConta(){
+  if(!OP.ativo||!conta||!OP.desafio) return;
+  OP.desafio.listar().then(lista=>{
+    const all=store.get('desafios',{});
+    lista.forEach(d=>{const k=AREA_POR_NOME[d.area]; if(!k) return; all[k]=Object.assign(all[k]||{},{nota:d.nota,anotacao:d.anotacao||'',data:d.concluido_em})});
+    store.set('desafios',all); renderAreas(); updateTrail();
+  }).catch(()=>{});
+}
+
 /* ENTREVISTA */
 const eArea=$('#eArea');
 eArea.innerHTML=Object.entries(ENT_TIPOS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
@@ -983,7 +1158,7 @@ $('#stages').addEventListener('change',e=>{
 /* marca automaticamente o que o site consegue verificar */
 function updateTrail(){
   const st=trailState(); let ch=false;
-  const auto={'0-0':!!store.get('quiz',null),'1-0':(store.get('cvScore',0)>=80),'2-0':store.get('entCount',0)>=5,'3-0':store.get('fav',[]).length>=5};
+  const auto={'0-3':Object.values(store.get('desafios',{})).some(d=>d&&d.nota),'0-0':!!store.get('quiz',null),'1-0':(store.get('cvScore',0)>=80),'2-0':store.get('entCount',0)>=5,'3-0':store.get('fav',[]).length>=5};
   for(const k in auto){ if(auto[k]&&!st[k]){st[k]=true;ch=true} }
   if(ch){store.set('trilha',st);renderTrail()}
 }
@@ -1059,7 +1234,7 @@ async function atualizarConta(){
   try{ conta=await OP.auth.perfil(); }catch(e){ conta=null; }
   if(conta&&conta.ativo===false){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
   $('#navConta').textContent=conta?'Minha conta':'Entrar';
-  if(conta){ preencherContato(); gravarTestePendente(); }
+  if(conta){ preencherContato(); gravarTestePendente(); carregarDesafiosDaConta(); }
   renderEntrar(); carregarListaCv(); renderHome();
 }
 $('#loginForm').addEventListener('submit',async e=>{
