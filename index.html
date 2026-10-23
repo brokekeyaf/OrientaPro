@@ -410,9 +410,34 @@ html[data-theme="dark"] .tool::before{background:#B99BDC}
 html[data-theme="dark"] .tool:nth-child(3n+2)::before{background:#71D7BF}
 html[data-theme="dark"] .tool:nth-child(3n)::before{background:#F0BE62}
 html[data-theme="dark"] .tool:hover{border-color:#69577A}
+.section-intro{max-width:64ch;margin:-.15rem 0 1.35rem;color:var(--ink-2);line-height:1.7}
+.pathway-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pathway-card{min-height:205px;padding:1.55rem 1.45rem 1.4rem 1.65rem;border:1px solid var(--line);border-left:4px solid var(--purple-2);box-shadow:none}
+.pathway-card:nth-child(2){border-left-color:var(--mint)}
+.pathway-card:nth-child(3){border-left-color:#B2791C}
+.pathway-card::before{display:none}
+.pathway-card::after{content:"0" counter(pathway);position:absolute;right:1.25rem;top:1rem;color:var(--purple-2);font-size:.78rem;font-weight:700;letter-spacing:.08em}
+.pathway-grid{counter-reset:pathway}
+.pathway-card{counter-increment:pathway}
+.pathway-card:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(43,29,59,.07)}
+.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));counter-reset:resource}
+.resource-grid .tool{min-height:132px;padding:1.35rem 1.4rem 1.3rem 4.15rem;box-shadow:none;border:1px solid var(--line)}
+.resource-grid .tool::before{left:0;top:0;bottom:0;width:3px;height:auto;border-radius:0;background:var(--mint)}
+.resource-grid .tool:nth-child(3n+2)::before,.resource-grid .tool:nth-child(3n)::before{background:var(--mint)}
+.resource-grid .tool::after{counter-increment:resource;content:counter(resource,decimal-leading-zero);position:absolute;left:1.25rem;top:1.35rem;color:var(--purple-2);font-size:.78rem;font-weight:700;letter-spacing:.08em}
+.resource-grid .tool:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(43,29,59,.07)}
+html[data-theme="dark"] .pathway-card{background:var(--card);border-color:var(--line);border-left-color:#B99BDC}
+html[data-theme="dark"] .pathway-card:nth-child(2){border-left-color:#71D7BF}
+html[data-theme="dark"] .pathway-card:nth-child(3){border-left-color:#F0BE62}
+html[data-theme="dark"] .pathway-card::after,html[data-theme="dark"] .resource-grid .tool::after{color:#D6B9F4}
+html[data-theme="dark"] .resource-grid .tool{background:var(--card);border-color:var(--line)}
+html[data-theme="dark"] .resource-grid .tool::before{background:#71D7BF}
 @media(max-width:600px){
   .block{padding-top:2.8rem}
   .tool{min-height:0}
+  .pathway-grid,.resource-grid{grid-template-columns:1fr}
+  .pathway-card{min-height:0;padding:1.3rem 1.2rem 1.2rem 1.4rem}
+  .resource-grid .tool{min-height:0;padding:1.2rem 1rem 1.2rem 3.6rem}
   .hero-band .wrap{width:min(100% - 2rem,1160px)}
   .hero-visual{border-radius:20px}
   .hero-step-card{padding:.75rem;gap:.7rem}
@@ -448,19 +473,19 @@ html[data-theme="dark"] .tool:hover{border-color:#69577A}
   <div class="hero-band">
     <div class="wrap">
       <div class="hero-copy">
-        <p class="hero-kicker">ORIENTAÇÃO PARA O PRÓXIMO PASSO</p>
-        <h1 id="h-inicio">Conectando estudantes ao mercado profissional</h1>
-        <p class="lead" id="greet">Plataforma profissional desenvolvida para unir estudantes, empresas e oportunidades reais de crescimento.</p>
+        <p class="hero-kicker">PARA QUEM ESTÁ COMEÇANDO</p>
+        <h1 id="h-inicio">Seu primeiro passo profissional começa aqui.</h1>
+        <p class="lead" id="greet">Ainda não sabe qual área seguir? Explore possibilidades, prepare seu currículo e se aproxime das primeiras vagas — um passo de cada vez.</p>
         <div class="cta">
-          <a class="btn hero-btn" href="#quiz">Começar Agora</a>
+          <a class="btn hero-btn" href="#quiz">Descobrir meu perfil</a>
         </div>
       </div>
       <div class="hero-visual" role="group" aria-label="Uma jornada do autoconhecimento até a primeira oportunidade">
-        <p class="journey-caption">Um caminho possível, etapa por etapa</p>
+        <p class="journey-caption">Um caminho possível, no seu ritmo</p>
         <div class="hero-steps">
-          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">01</span><p><strong>Descubra seu perfil</strong><small>Reconheça seus interesses e pontos fortes</small></p></div>
-          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">02</span><p><strong>Prepare-se</strong><small>Monte seu currículo e pratique entrevistas</small></p></div>
-          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">03</span><p><strong>Encontre oportunidades</strong><small>Explore vagas e dê o próximo passo</small></p></div>
+          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">01</span><p><strong>Descubra o que combina com você</strong><small>Comece pelo teste de perfil</small></p></div>
+          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">02</span><p><strong>Prepare seu material</strong><small>Organize o currículo e pratique entrevistas</small></p></div>
+          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">03</span><p><strong>Procure seu próximo passo</strong><small>Explore áreas e oportunidades</small></p></div>
         </div>
         <p class="journey-note">Você não precisa ter tudo decidido para começar.</p>
       </div>
@@ -468,19 +493,20 @@ html[data-theme="dark"] .tool:hover{border-color:#69577A}
   </div>
   <div class="wrap">
     <section class="block" id="sobre" aria-labelledby="h-sobre">
-      <h2 id="h-sobre">Sobre a Plataforma</h2>
-      <p class="center">O OrientaPro foi criado para facilitar a entrada de jovens no mercado de trabalho através de conexões inteligentes, capacitação e acesso simplificado às vagas. Aqui, quem ainda não tem direção encontra o primeiro passo.</p>
-      <div class="tool-grid" style="margin-top:1.5rem">
-        <a class="tool" href="#quiz"><h3>Não faço ideia do que quero</h3><p>Comece pelo teste de perfil e ganhe uma direção em 3 minutos.</p></a>
-        <a class="tool" href="#areas"><h3>Tenho uma ideia, mas não sei o que estudar</h3><p>Veja o dia a dia e os cargos de entrada de cada área.</p></a>
-        <a class="tool" href="#curriculo"><h3>Já sei o que quero</h3><p>Monte o currículo, treine a entrevista e filtre as vagas.</p></a>
+      <h2 id="h-sobre">Você não precisa ter tudo decidido</h2>
+      <p class="center">O começo pode dar um frio na barriga. Aqui você pode conhecer áreas, entender o que combina com seus interesses e se preparar para procurar uma oportunidade — sem precisar resolver tudo de uma vez.</p>
+      <div class="tool-grid pathway-grid" style="margin-top:1.5rem">
+        <a class="tool pathway-card" href="#quiz"><h3>Estou em dúvida</h3><p>Faça o teste de perfil e veja algumas áreas para explorar.</p></a>
+        <a class="tool pathway-card" href="#areas"><h3>Quero conhecer uma área</h3><p>Veja como é o dia a dia e experimente um desafio prático.</p></a>
+        <a class="tool pathway-card" href="#curriculo"><h3>Quero me preparar</h3><p>Monte seu currículo, pratique entrevistas e explore vagas.</p></a>
       </div>
       <div class="last-result" id="lastResult" aria-live="polite" style="margin-top:1.2rem;border:1px solid var(--line)">Você ainda não fez o teste. Seu resultado aparece aqui depois.</div>
     </section>
 
     <section class="block" id="recursos" aria-labelledby="h-recursos">
-      <h2 id="h-recursos">Recursos</h2>
-      <div class="tool-grid">
+      <h2 id="h-recursos">Ferramentas para cada etapa</h2>
+      <p class="section-intro">Use o que fizer sentido agora. Você pode voltar às outras ferramentas quando precisar.</p>
+      <div class="tool-grid resource-grid">
         <a class="tool" href="#quiz"><h3>Teste de perfil</h3><p>Descubra qual área combina com você.</p></a>
         <a class="tool" href="#areas"><h3>Explorar áreas</h3><p>Conheça o dia a dia e teste cada área por 1 hora.</p></a>
         <a class="tool" href="#curriculo"><h3>Currículo Online</h3><p>Monte seu currículo profissional rapidamente, com nota.</p></a>
@@ -492,7 +518,7 @@ html[data-theme="dark"] .tool:hover{border-color:#69577A}
     </section>
 
     <section class="block" id="vagas" aria-labelledby="h-ultimas">
-      <h2 id="h-ultimas">Últimas Vagas</h2>
+      <h2 id="h-ultimas">Exemplos de vagas</h2>
       <div class="jobs" id="homeJobs"></div>
       <p class="center" style="margin-top:1.5rem"><a class="btn" href="#todas-vagas">Ver todas as vagas</a></p>
       <p class="hint center">Vagas de exemplo, criadas para demonstração do projeto.</p>
