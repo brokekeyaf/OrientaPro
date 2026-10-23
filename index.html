@@ -238,6 +238,18 @@ nav.main a[aria-current="page"]{background:#fff;color:var(--purple)}
 .btn.hero-btn:hover{background:var(--purple-d)}
 footer{background:var(--purple)}
 .cv-paper{--ink:#1F1A2E;--ink-2:#4A4560;--line:#E2DDEB;color:#1F1A2E}
+.social-login{display:grid;gap:.7rem;margin-bottom:1.2rem}
+.social-btn{width:100%;min-height:48px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:700 1rem var(--body);cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
+.social-btn:hover{transform:translateY(-1px);border-color:var(--purple);box-shadow:0 4px 14px rgba(31,26,46,.1)}
+.login-divider{display:flex;align-items:center;gap:.8rem;color:var(--ink-2);font-size:.88rem;margin:1rem 0}
+.login-divider::before,.login-divider::after{content:"";height:1px;background:var(--line);flex:1}
+.login-intro{margin-bottom:1.2rem}
+.live-linkedin{margin:1.2rem 0 1.6rem}
+.live-linkedin .row{align-items:end}
+.linkedin-searches{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin-top:1rem}
+.linkedin-search{border:1px solid var(--line);border-radius:var(--r-md);padding:1rem;background:var(--card)}
+.linkedin-search h4{margin:0 0 .35rem;font-size:1rem}
+.linkedin-search p{margin:0 0 .8rem;color:var(--ink-2);font-size:.9rem}
 
 /* ===== Modo escuro (botão da lua) ===== */
 html[data-theme="dark"]{color-scheme:dark;--purple:#3E1C66;--link:#C79BEA;--ink:#EDE7F6;--ink-2:#B9AECF;--paper:#15111D;--card:#1F1929;--line:#38304A}
@@ -383,6 +395,12 @@ details.termo summary{cursor:pointer;color:var(--link)}
     </div>
 
     <form class="panel" id="loginForm" novalidate hidden>
+      <p class="hint login-intro">Entre do jeito que for mais fácil para você.</p>
+      <div class="social-login">
+        <button class="social-btn" type="button" id="loginGoogle">G&nbsp; Continuar com Google</button>
+        <button class="social-btn" type="button" id="loginLinkedin">in&nbsp; Continuar com LinkedIn</button>
+      </div>
+      <div class="login-divider">ou entre com e-mail</div>
       <div class="field"><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="email"><div class="err" data-for="lEmail"></div></div>
       <div class="field"><label for="lSenha">Senha</label><input id="lSenha" type="password" autocomplete="current-password"><div class="err" data-for="lSenha"></div></div>
       <div class="acoes"><button class="btn" type="submit" id="lBtn">Entrar</button><button type="button" class="linkbtn" id="lEsqueci">Esqueci minha senha</button></div>
@@ -409,6 +427,15 @@ details.termo summary{cursor:pointer;color:var(--link)}
     <div class="panel" id="contaPanel" hidden>
       <h3 id="contaNome">Minha conta</h3>
       <p class="hint" id="contaEmail"></p>
+      <form id="socialOnboarding" class="panel" hidden style="margin:1rem 0;background:var(--paper)">
+        <h3>Complete seu cadastro</h3>
+        <p class="hint">Para proteger sua conta e liberar seus recursos, informe sua data de nascimento. É necessário ter pelo menos 14 anos.</p>
+        <div class="field"><label for="socialBirth">Data de nascimento</label><input id="socialBirth" type="date" autocomplete="bday" required><div class="err" data-for="socialBirth"></div></div>
+        <button class="btn" id="socialBirthSubmit" type="submit">Concluir cadastro</button>
+        <div class="msg" id="socialBirthMsg" role="status"></div>
+      </form>
+      <button type="button" class="linkbtn" id="btnSairPendente" hidden>Sair da conta</button>
+      <div id="contaConteudo">
       <div class="acoes" style="margin-top:1rem">
         <a class="btn small" href="#curriculo">Meus currículos</a>
         <a class="btn small ghost" href="#quiz">Fazer o teste</a>
@@ -416,6 +443,7 @@ details.termo summary{cursor:pointer;color:var(--link)}
       </div>
       <h3 style="margin-top:1.6rem">Meus testes</h3>
       <ul class="cv-lista" id="contaTestes"><li class="hint">Carregando…</li></ul>
+      </div>
     </div>
   </div>
 </section>
@@ -455,6 +483,15 @@ details.termo summary{cursor:pointer;color:var(--link)}
       <div><label for="fn">Nível</label><select id="fn"></select></div>
       <div><label for="fm">Modalidade</label><select id="fm"></select></div>
     </div>
+    <aside class="panel live-linkedin" aria-labelledby="linkedinJobsTitle">
+      <h3 id="linkedinJobsTitle">Vagas reais e atualizadas no LinkedIn</h3>
+      <p class="hint">Escolha uma área sugerida pelo seu teste ou pelos filtros. A busca abre no LinkedIn, onde você vê os anúncios disponíveis naquele momento.</p>
+      <div class="row">
+        <div class="field"><label for="linkedinLocation">Localização</label><input id="linkedinLocation" type="search" value="Brasil" placeholder="Ex.: São Paulo, SP"></div>
+      </div>
+      <div class="linkedin-searches" id="linkedinJobSearches"></div>
+      <p class="hint" style="margin:.8rem 0 0">As vagas são exibidas pelo próprio LinkedIn. O OrientaPro não importa nem armazena anúncios da plataforma.</p>
+    </aside>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
       <span class="hint" id="jobCount" aria-live="polite"></span>
       <span style="display:flex;gap:.5rem;flex-wrap:wrap">
@@ -463,7 +500,7 @@ details.termo summary{cursor:pointer;color:var(--link)}
       </span>
     </div>
     <div class="jobs" id="jobList"></div>
-    <p class="hint" style="margin-top:1.5rem">Todas as vagas e empresas desta página são fictícias, feitas para demonstração acadêmica.</p>
+    <p class="hint" style="margin-top:1.5rem">As vagas listadas abaixo são exemplos fictícios para demonstração. Use a busca do LinkedIn acima para consultar anúncios reais e atuais.</p>
   </div>
 </section>
 
@@ -671,7 +708,7 @@ const STAR=['Contei a situação em poucas frases','Expliquei qual era meu papel
 
 const TRILHA=[
  {t:'Descobrir',i:['Fazer o teste de perfil','Ler 5 termos do glossário','Conversar com alguém que trabalha na área que te interessa','Fazer um desafio de 1 hora e avaliar a área']},
- {t:'Preparar',i:['Criar o currículo e chegar a 80 pontos','Atualizar ou criar o perfil no LinkedIn','Pedir a um professor que revise seu currículo','Separar 2 exemplos de trabalhos ou projetos']},
+ {t:'Preparar',i:['Criar o currículo e chegar a 80 pontos','Criar ou atualizar o perfil no LinkedIn: foto, título e resumo profissional','Adicionar experiências, projetos, formação e competências ao LinkedIn','Revisar o currículo e alinhar as informações com o perfil do LinkedIn','Pedir a um professor que revise seu currículo','Separar 2 exemplos de trabalhos ou projetos']},
  {t:'Praticar',i:['Responder 5 perguntas no simulador','Gravar a resposta de "Fale sobre você"','Fazer uma entrevista simulada com um colega']},
  {t:'Candidatar',i:['Favoritar 5 vagas','Adaptar o currículo para cada vaga','Enviar 3 candidaturas','Anotar retornos e aprender com os "nãos"']}
 ];
@@ -873,9 +910,21 @@ function renderJobs(){
   const list=JOBS.filter(j=>(!fa.value||j.a===fa.value)&&(!fn.value||j.n===fn.value)&&(!fm.value||j.m===fm.value)&&(!onlyFav||fav.includes(j.id))&&(!q||(j.t+' '+j.e+' '+j.c).toLowerCase().includes(q)));
   $('#jobCount').textContent=list.length===1?'1 vaga encontrada':list.length+' vagas encontradas';
   $('#jobList').innerHTML=list.length?list.map(j=>jobCard(j,true)).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma vaga com esses filtros. Limpe os filtros ou busque por outro termo.</div>';
+  renderLinkedinSearches();
+}
+function renderLinkedinSearches(){
+  const r=store.get('quiz',null), keys=fa.value?[fa.value]:r?AK.slice().sort((a,b)=>(r.pct?.[b]||0)-(r.pct?.[a]||0)).slice(0,3):AK;
+  const loc=$('#linkedinLocation').value.trim()||'Brasil', custom=fq.value.trim(), level=fn.value;
+  $('#linkedinJobSearches').innerHTML=keys.map(k=>{
+    const area=AREAS[k], keywords=[custom||area.cargos[0],level].filter(Boolean).join(' ');
+    const href='https://www.linkedin.com/jobs/search/?keywords='+encodeURIComponent(keywords)+'&location='+encodeURIComponent(loc);
+    const tag=r&&r.top===k?'<span class="tag mint">Combina com seu teste</span>':'';
+    return `<article class="linkedin-search">${tag}<h4>${esc(area.n)}</h4><p>Busca por ${esc(custom||area.cargos[0])}${level?' · '+esc(level):''}</p><a class="btn small" href="${href}" target="_blank" rel="noopener noreferrer">Ver vagas atualizadas</a></article>`;
+  }).join('');
 }
 [fa,fn,fm].forEach(el=>el.addEventListener('change',renderJobs));
 fq.addEventListener('input',renderJobs);
+$('#linkedinLocation').addEventListener('input',renderLinkedinSearches);
 $('#onlyFav').addEventListener('click',e=>{onlyFav=!onlyFav;e.currentTarget.setAttribute('aria-pressed',onlyFav);renderJobs()});
 $('#clearF').addEventListener('click',()=>{fa.value=fn.value=fm.value=fq.value='';onlyFav=false;$('#onlyFav').setAttribute('aria-pressed','false');renderJobs()});
 $('#jobList').addEventListener('click',e=>{
@@ -1217,6 +1266,11 @@ function renderEntrar(){
   mostrar('contaPanel');
   $('#contaNome').textContent='Olá, '+conta.nome_completo.split(' ')[0];
   $('#contaEmail').textContent=conta.email;
+  const pendente=conta.tipo_usuario==='ESTUDANTE'&&!conta.data_nascimento&&conta.ativo===false&&String(conta.motivo_bloqueio||'').startsWith('Cadastro pendente:');
+  $('#socialOnboarding').hidden=!pendente;
+  $('#btnSairPendente').hidden=!pendente;
+  $('#contaConteudo').hidden=pendente;
+  if(pendente) return;
   OP.teste.historico().then(h=>{
     $('#contaTestes').innerHTML=h.length?h.map(t=>`<li><span>${esc(t.area||'')}</span><span class="hint">${new Date(t.concluido_em).toLocaleDateString('pt-BR')}</span></li>`).join(''):'<li class="hint">Você ainda não salvou nenhum teste. <a href="#quiz">Fazer agora</a></li>';
   }).catch(()=>{$('#contaTestes').innerHTML='<li class="hint">Não foi possível carregar os testes.</li>'});
@@ -1232,11 +1286,28 @@ function aplicarModo(){
 async function atualizarConta(){
   if(!OP.ativo){conta=null;renderCvConta();return}
   try{ conta=await OP.auth.perfil(); }catch(e){ conta=null; }
-  if(conta&&conta.ativo===false){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
+  if(conta&&conta.ativo===false&&!String(conta.motivo_bloqueio||'').startsWith('Cadastro pendente:')){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
   $('#navConta').textContent=conta?'Minha conta':'Entrar';
-  if(conta){ preencherContato(); gravarTestePendente(); carregarDesafiosDaConta(); }
+  if(conta&&conta.ativo!==false){ preencherContato(); gravarTestePendente(); carregarDesafiosDaConta(); }
   renderEntrar(); carregarListaCv(); renderHome();
 }
+async function loginSocial(provedor){
+  const m=$('#lMsg');m.className='msg';m.textContent='Abrindo o acesso seguro…';
+  $('#loginGoogle').disabled=true;$('#loginLinkedin').disabled=true;
+  try{await OP.auth.entrarSocial(provedor)}catch(err){m.className='msg no';m.textContent=err.message;$('#loginGoogle').disabled=false;$('#loginLinkedin').disabled=false}
+}
+$('#loginGoogle').addEventListener('click',()=>loginSocial('google'));
+$('#loginLinkedin').addEventListener('click',()=>loginSocial('linkedin_oidc'));
+$('#socialOnboarding').addEventListener('submit',async e=>{
+  e.preventDefault();const nascimento=$('#socialBirth').value;
+  const valida=!!nascimento&&idade(nascimento)>=14&&idade(nascimento)<120;
+  setErr('socialBirth',valida?'':nascimento?'É preciso ter pelo menos 14 anos.':'Informe sua data de nascimento.');
+  if(!valida)return;
+  const b=$('#socialBirthSubmit'),m=$('#socialBirthMsg');b.disabled=true;m.textContent='Salvando…';
+  try{await OP.auth.concluirCadastroSocial(nascimento);await atualizarConta();toast('Cadastro concluído. Bem-vindo(a)!')}
+  catch(err){m.className='msg no';m.textContent=err.message}
+  b.disabled=false;
+});
 $('#loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const email=$('#lEmail').value.trim(), senha=$('#lSenha').value; let bad=0;
@@ -1270,6 +1341,7 @@ $('#novaSenhaForm').addEventListener('submit',async e=>{
   b.disabled=false;
 });
 $('#btnSair').addEventListener('click',async()=>{ await OP.auth.sair(); cvAtual=null; store.set('cvId',null); await atualizarConta(); location.hash='#inicio'; toast('Você saiu da conta'); });
+$('#btnSairPendente').addEventListener('click',async()=>{ await OP.auth.sair(); await atualizarConta(); location.hash='#inicio'; toast('Você saiu da conta'); });
 ['loginForm','recForm','novaSenhaForm'].forEach(id=>$('#'+id).addEventListener('input',e=>{if(e.target.id)setErr(e.target.id,'')}));
 
 /* tema claro/escuro */
