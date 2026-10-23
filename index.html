@@ -378,6 +378,48 @@ html[data-theme="dark"] .hero-band .lead,html[data-theme="dark"] .hero-step-card
 html[data-theme="dark"] .btn{background:var(--purple-2);color:#fff}
 html[data-theme="dark"] .btn:hover{background:var(--purple-d)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+/* Ritmo mais editorial e componentes com detalhes visuais próprios */
+.block{padding:clamp(3rem,6vw,4.5rem) 0 .25rem;scroll-margin-top:88px}
+.block>h2{display:table;text-align:left;margin:0 0 1.1rem;font-size:clamp(1.65rem,3vw,2.2rem);line-height:1.2}
+.block>h2::after{content:"";display:block;width:42px;height:4px;margin-top:.65rem;border-radius:99px;background:var(--mint)}
+#sobre>p.center{margin:0;max-width:72ch;text-align:left;line-height:1.75}
+.tool-grid{gap:1.1rem;align-items:stretch}
+.tool{position:relative;overflow:hidden;min-height:180px;padding:1.45rem 1.4rem 1.35rem;border-radius:18px;box-shadow:0 4px 14px rgba(43,29,59,.045)}
+.tool::before{content:"";position:absolute;left:1.4rem;top:0;width:40px;height:4px;border-radius:0 0 4px 4px;background:var(--purple-2)}
+.tool:nth-child(3n+2)::before{background:var(--mint)}
+.tool:nth-child(3n)::before{background:#B2791C}
+.tool h3{font-size:1.08rem;line-height:1.35;margin:.2rem 0 .55rem}
+.tool p{font-size:.94rem;line-height:1.55}
+.tool:hover{transform:translateY(-2px);border-color:#CDB8DE;box-shadow:0 9px 22px rgba(43,29,59,.09)}
+.tool:focus-visible,.job:focus-within{outline:3px solid var(--focus);outline-offset:3px}
+.job{border-radius:17px;box-shadow:0 4px 14px rgba(43,29,59,.045)}
+.job h3{font-size:1.08rem;line-height:1.35}
+.job .meta{font-size:.9rem}
+.view{padding:clamp(2.5rem,5vw,4rem) 0 5rem}
+.view-head{max-width:720px;margin-bottom:1.8rem}
+.view-head h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:.65rem}
+.view-head p{font-size:1rem;line-height:1.65}
+.panel{border-radius:20px}
+.field{margin-bottom:1.1rem}
+label{font-weight:700}
+.social-btn{min-height:50px;justify-content:center}
+.social-btn:focus-visible,.btn:focus-visible,.theme-btn:focus-visible{outline-offset:3px}
+#cadForm .btn,#loginForm .btn{min-height:48px}
+#toast{max-width:calc(100vw - 2rem);text-align:center;line-height:1.4}
+html[data-theme="dark"] .tool::before{background:#B99BDC}
+html[data-theme="dark"] .tool:nth-child(3n+2)::before{background:#71D7BF}
+html[data-theme="dark"] .tool:nth-child(3n)::before{background:#F0BE62}
+html[data-theme="dark"] .tool:hover{border-color:#69577A}
+@media(max-width:600px){
+  .block{padding-top:2.8rem}
+  .tool{min-height:0}
+  .hero-band .wrap{width:min(100% - 2rem,1160px)}
+  .hero-visual{border-radius:20px}
+  .hero-step-card{padding:.75rem;gap:.7rem}
+  .hero-step-card small{font-size:.82rem}
+  .theme-btn{width:44px;height:44px;margin-left:.25rem}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
