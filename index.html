@@ -4,8 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OrientaPro · Do estudo à primeira vaga</title>
-<meta name="theme-color" content="#7231B7">
+<meta name="theme-color" content="#5B2D86">
 <meta name="description" content="Plataforma para estudantes descobrirem sua área, montarem currículo, treinarem entrevista e encontrarem vagas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#0F2447; --ink-2:#3B4A63; --paper:#F6F7FB; --card:#FFFFFF; --line:#DDE2EC;
@@ -299,18 +302,20 @@ details.termo summary{cursor:pointer;color:var(--link)}
 
 /* ===== Atualização visual: identidade roxa, com contraste e espaçamento mais atuais ===== */
 :root{
-  --purple:#5B2D86; --purple-2:#7040A5; --purple-d:#48216F; --link:#633795;
-  --blue:#7040A5; --blue-d:#552D85;
-  --ink:#292238; --ink-2:#625B70; --paper:#F7F5FA; --card:#FFFFFF; --line:#E7E1ED;
-  --mint:#168F7A; --amber:#F4B544; --rose:#C43D59;
-  --display:'Aptos Display','Segoe UI Variable','Segoe UI',system-ui,sans-serif;
-  --body:'Aptos','Segoe UI Variable','Segoe UI',system-ui,sans-serif;
+  --purple:#5B2D86; --purple-2:#7040A5; --purple-d:#48216F; --link:#59317F;
+  --blue:#7040A5; --blue-d:#552D85; --focus:#087B6E;
+  --ink:#292238; --ink-2:#625B70; --paper:#F8F6FA; --card:#FFFFFF; --line:#E7E1ED;
+  --mint:#087B6E; --amber:#F4B544; --rose:#B92F4F;
+  --hero-surface:#F0EBF4; --hero-card:#FFFFFF; --soft-teal:#E0F1EC; --soft-amber:#FFF2D8;
+  --display:'Atkinson Hyperlegible','Segoe UI',Arial,sans-serif;
+  --body:'Atkinson Hyperlegible','Segoe UI',Arial,sans-serif;
   --r-lg:22px; --r-md:15px; --r-sm:11px;
 }
 body{font-size:16px;line-height:1.65}
 h1,h2,h3{letter-spacing:-.025em}
 h1{font-weight:750}
 h2{font-weight:720}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 header.top{background:rgba(79,38,116,.97);border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 4px 18px rgba(36,20,52,.12)}
 .bar{min-height:72px}
 .logo{font-size:1.55rem;letter-spacing:-.025em;gap:.7rem}
@@ -322,10 +327,27 @@ nav.main a:hover{background:rgba(255,255,255,.17)}
 nav.main a[aria-current="page"]{background:#fff;color:var(--purple)}
 .menu-btn{border-radius:12px}
 @media(max-width:900px){nav.main{top:72px;background:#4F2674;box-shadow:0 12px 20px rgba(36,20,52,.15)}}
-.hero-band{background:linear-gradient(115deg,rgba(39,20,58,.9),rgba(79,38,116,.68)),url('hero.jpg') center/cover no-repeat,#39234F}
-.hero-band .wrap{max-width:960px}
-.hero-band h1{letter-spacing:-.035em;font-weight:760}
-.hero-band .lead{line-height:1.6;color:#F2EAF9}
+.hero-band{background:var(--hero-surface);color:var(--ink);min-height:auto;display:block;padding:clamp(3rem,7vw,5.75rem) 0;position:relative;overflow:hidden}
+.hero-band .wrap{width:min(1160px,100% - 2.5rem);max-width:1160px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);align-items:center;gap:clamp(2rem,6vw,5rem)}
+.hero-copy{position:relative;z-index:1}
+.hero-kicker{font-size:.8rem;font-weight:700;letter-spacing:.12em;color:var(--purple);margin:0 0 1rem}
+.hero-band h1{color:var(--ink);font-size:clamp(2.5rem,5.5vw,4.25rem);line-height:1.08;letter-spacing:-.04em;font-weight:700;max-width:15ch;margin:0 0 1rem}
+.hero-band .lead{line-height:1.65;color:var(--ink-2);font-size:1.12rem;max-width:52ch;margin:0}
+.hero-band .cta{justify-content:flex-start;margin-top:1.5rem}
+.hero-visual{background:#E8E0EF;border:1px solid #DDD1E8;border-radius:26px;padding:clamp(1.2rem,3vw,1.8rem);max-width:500px;width:100%;justify-self:end;box-shadow:0 16px 36px rgba(53,34,71,.09)}
+.journey-caption{font-size:.9rem;font-weight:700;color:var(--purple);margin:0 0 1rem .2rem}
+.hero-steps{display:grid;gap:.8rem;position:relative}
+.hero-steps::before{content:"";position:absolute;left:1.35rem;top:2rem;bottom:2rem;border-left:2px dashed #B7A1CC}
+.hero-step-card{position:relative;display:flex;align-items:center;gap:.9rem;min-height:76px;padding:.8rem .9rem;background:var(--hero-card);border:1px solid rgba(91,45,134,.1);border-radius:15px;box-shadow:0 3px 10px rgba(46,30,62,.045)}
+.hero-step-number{position:relative;z-index:1;flex:none;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:var(--purple);color:#fff;font-size:.84rem;font-weight:700}
+.hero-step-card:nth-child(2) .hero-step-number{background:#087B6E}
+.hero-step-card:nth-child(3) .hero-step-number{background:#815414}
+.hero-step-card p{margin:0;min-width:0}
+.hero-step-card strong,.hero-step-card small{display:block}
+.hero-step-card strong{font-size:.98rem;color:var(--ink)}
+.hero-step-card small{font-size:.86rem;line-height:1.4;color:var(--ink-2);margin-top:.12rem}
+.journey-note{font-size:.88rem;color:var(--ink-2);border-top:1px solid rgba(91,45,134,.14);padding-top:.85rem;margin:.9rem 0 0}
+@media(max-width:860px){.hero-band .wrap{grid-template-columns:1fr;gap:2rem}.hero-visual{justify-self:stretch;max-width:none}.hero-band h1{max-width:18ch}}
 .btn{border-radius:12px;padding:.82rem 1.35rem;box-shadow:0 5px 14px rgba(76,42,112,.14);transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
 .btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(76,42,112,.2)}
 .btn.ghost{box-shadow:inset 0 0 0 1.5px var(--purple)}
@@ -343,9 +365,18 @@ input:focus,select:focus,textarea:focus{border-color:var(--purple);box-shadow:0 
 .social-btn:hover{background:#FBF9FD;border-color:#B99BD2;box-shadow:0 6px 16px rgba(43,29,59,.09)}
 .block{padding-top:4rem}
 .section{margin-top:4.5rem}
-.band{background:linear-gradient(125deg,#352047,#5B2D86);box-shadow:0 12px 30px rgba(48,28,67,.12)}
+.band{background:#432B5B;box-shadow:0 12px 30px rgba(48,28,67,.12)}
 footer{background:#3E2457;margin-top:4rem}
 #toast{background:#342044;box-shadow:0 8px 24px rgba(20,12,29,.22)}
+html[data-theme="dark"]{--purple:#C4A7DF;--purple-2:#78539E;--purple-d:#674386;--blue:#78539E;--blue-d:#674386;--focus:#86D8C6;--link:#D5B8EF;--ink:#F1EDF5;--ink-2:#C6BDCF;--paper:#17131C;--card:#211B27;--line:#403746;--mint:#71D7BF;--rose:#FF8A9D;--hero-surface:#211B27;--hero-card:#2B2432;--soft-teal:#1D3B35;--soft-amber:#493819}
+html[data-theme="dark"] .hero-visual{background:#2A2232;border-color:#493A54}
+html[data-theme="dark"] .hero-step-card{border-color:#493A54}
+html[data-theme="dark"] .hero-step-number{background:#69458A}
+html[data-theme="dark"] .hero-step-card:nth-child(2) .hero-step-number{background:#176D61}
+html[data-theme="dark"] .hero-step-card:nth-child(3) .hero-step-number{background:#77501B}
+html[data-theme="dark"] .hero-band .lead,html[data-theme="dark"] .hero-step-card small{color:var(--ink-2)}
+html[data-theme="dark"] .btn{background:var(--purple-2);color:#fff}
+html[data-theme="dark"] .btn:hover{background:var(--purple-d)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
@@ -364,7 +395,7 @@ footer{background:#3E2457;margin-top:4rem}
       <a href="#cadastro" id="navCadastro">Cadastro</a>
       <a href="#entrar" id="navConta">Entrar</a>
     </nav>
-    <button class="theme-btn" id="themeBtn" type="button" aria-label="Ativar modo escuro" aria-pressed="false">🌙</button>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Ativar modo escuro" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 15.4A8.5 8.5 0 0 1 8.6 3.5 8.5 8.5 0 1 0 20.5 15.4Z"/></svg></button>
   </div>
 </header>
 
@@ -374,10 +405,22 @@ footer{background:#3E2457;margin-top:4rem}
 <section class="view" data-view="inicio" style="padding:0" aria-labelledby="h-inicio">
   <div class="hero-band">
     <div class="wrap">
-      <h1 id="h-inicio">Conectando estudantes ao mercado profissional</h1>
-      <p class="lead" id="greet">Plataforma profissional desenvolvida para unir estudantes, empresas e oportunidades reais de crescimento.</p>
-      <div class="cta">
-        <a class="btn hero-btn" href="#quiz">Começar Agora</a>
+      <div class="hero-copy">
+        <p class="hero-kicker">ORIENTAÇÃO PARA O PRÓXIMO PASSO</p>
+        <h1 id="h-inicio">Conectando estudantes ao mercado profissional</h1>
+        <p class="lead" id="greet">Plataforma profissional desenvolvida para unir estudantes, empresas e oportunidades reais de crescimento.</p>
+        <div class="cta">
+          <a class="btn hero-btn" href="#quiz">Começar Agora</a>
+        </div>
+      </div>
+      <div class="hero-visual" role="group" aria-label="Uma jornada do autoconhecimento até a primeira oportunidade">
+        <p class="journey-caption">Um caminho possível, etapa por etapa</p>
+        <div class="hero-steps">
+          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">01</span><p><strong>Descubra seu perfil</strong><small>Reconheça seus interesses e pontos fortes</small></p></div>
+          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">02</span><p><strong>Prepare-se</strong><small>Monte seu currículo e pratique entrevistas</small></p></div>
+          <div class="hero-step-card"><span class="hero-step-number" aria-hidden="true">03</span><p><strong>Encontre oportunidades</strong><small>Explore vagas e dê o próximo passo</small></p></div>
+        </div>
+        <p class="journey-note">Você não precisa ter tudo decidido para começar.</p>
       </div>
     </div>
   </div>
@@ -1413,7 +1456,7 @@ $('#btnSairPendente').addEventListener('click',async()=>{ await OP.auth.sair(); 
 
 /* tema claro/escuro */
 const root=document.documentElement;
-function applyTheme(t){root.setAttribute('data-theme',t);const b=$('#themeBtn');b.textContent=t==='dark'?'☀️':'🌙';b.setAttribute('aria-label',t==='dark'?'Ativar modo claro':'Ativar modo escuro');b.setAttribute('aria-pressed',t==='dark')}
+function applyTheme(t){root.setAttribute('data-theme',t);const b=$('#themeBtn');b.innerHTML=t==='dark'?'<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>':'<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 15.4A8.5 8.5 0 0 1 8.6 3.5 8.5 8.5 0 1 0 20.5 15.4Z"/></svg>';b.setAttribute('aria-label',t==='dark'?'Ativar modo claro':'Ativar modo escuro');b.setAttribute('aria-pressed',t==='dark')}
 applyTheme(store.get('theme','light')==='dark'?'dark':'light');
 $('#themeBtn').addEventListener('click',()=>{const t=root.getAttribute('data-theme')==='dark'?'light':'dark';store.set('theme',t);applyTheme(t)});
 
