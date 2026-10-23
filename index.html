@@ -527,7 +527,7 @@ html[data-theme="dark"] .social-btn:hover{background:#30283A}
         <a class="tool" href="#quiz"><h3>Teste de perfil</h3><p>Descubra qual área combina com você.</p></a>
         <a class="tool" href="#areas"><h3>Explorar áreas</h3><p>Conheça o dia a dia e teste cada área por 1 hora.</p></a>
         <a class="tool" href="#curriculo"><h3>Currículo Online</h3><p>Monte seu currículo profissional rapidamente, com nota.</p></a>
-        <a class="tool" href="#todas-vagas"><h3>Vagas Atualizadas</h3><p>Encontre oportunidades compatíveis com seu perfil.</p></a>
+        <a class="tool" href="#todas-vagas"><h3>Buscar vagas no LinkedIn</h3><p>Pesquise por área e localização; os resultados abrem no LinkedIn.</p></a>
         <a class="tool" href="#entrevista"><h3>Simulador de entrevista</h3><p>Ensaie as respostas com timer e checklist.</p></a>
         <a class="tool" href="#trilha"><h3>Trilha de preparação</h3><p>Siga um checklist até a primeira candidatura.</p></a>
         <a class="tool" href="#glossario"><h3>Glossário</h3><p>Entenda os termos que aparecem nas vagas.</p></a>
@@ -661,7 +661,7 @@ html[data-theme="dark"] .social-btn:hover{background:#30283A}
 <!-- VAGAS -->
 <section class="view" data-view="todas-vagas" aria-labelledby="h-vagas">
   <div class="wrap">
-    <div class="view-head"><h2 id="h-vagas">Vagas</h2><p>Filtre por área, nível e modalidade. Favorite as que quiser revisar depois.</p></div>
+    <div class="view-head"><h2 id="h-vagas">Vagas</h2><p>Filtre os exemplos do OrientaPro ou use a busca para consultar anúncios disponíveis no LinkedIn.</p></div>
     <div class="filters">
       <div class="f-search"><label for="fq">Buscar</label><input id="fq" type="search" placeholder="Cargo, empresa ou cidade"></div>
       <div><label for="fa">Área</label><select id="fa"></select></div>
@@ -669,8 +669,8 @@ html[data-theme="dark"] .social-btn:hover{background:#30283A}
       <div><label for="fm">Modalidade</label><select id="fm"></select></div>
     </div>
     <aside class="panel live-linkedin" aria-labelledby="linkedinJobsTitle">
-      <h3 id="linkedinJobsTitle">Vagas reais e atualizadas no LinkedIn</h3>
-      <p class="hint">Escolha uma área sugerida pelo seu teste ou pelos filtros. A busca abre no LinkedIn, onde você vê os anúncios disponíveis naquele momento.</p>
+      <h3 id="linkedinJobsTitle">Buscar vagas no LinkedIn</h3>
+      <p class="hint">Escolha uma área sugerida pelo seu teste ou pelos filtros. A busca abre no LinkedIn e mostra os anúncios disponíveis naquele momento.</p>
       <div class="row">
         <div class="field"><label for="linkedinLocation">Localização</label><input id="linkedinLocation" type="search" value="Brasil" placeholder="Ex.: São Paulo, SP"></div>
       </div>
@@ -685,7 +685,7 @@ html[data-theme="dark"] .social-btn:hover{background:#30283A}
       </span>
     </div>
     <div class="jobs" id="jobList"></div>
-    <p class="hint" style="margin-top:1.5rem">As vagas listadas abaixo são exemplos fictícios para demonstração. Use a busca do LinkedIn acima para consultar anúncios reais e atuais.</p>
+    <p class="hint" style="margin-top:1.5rem">As vagas listadas abaixo são exemplos fictícios para demonstração. Para consultar vagas reais, use a busca do LinkedIn acima; os resultados são exibidos na própria plataforma.</p>
   </div>
 </section>
 
@@ -1104,7 +1104,7 @@ function renderLinkedinSearches(){
     const area=AREAS[k], keywords=[custom||area.cargos[0],level].filter(Boolean).join(' ');
     const href='https://www.linkedin.com/jobs/search/?keywords='+encodeURIComponent(keywords)+'&location='+encodeURIComponent(loc);
     const tag=r&&r.top===k?'<span class="tag mint">Combina com seu teste</span>':'';
-    return `<article class="linkedin-search">${tag}<h4>${esc(area.n)}</h4><p>Busca por ${esc(custom||area.cargos[0])}${level?' · '+esc(level):''}</p><a class="btn small" href="${href}" target="_blank" rel="noopener noreferrer">Ver vagas atualizadas</a></article>`;
+    return `<article class="linkedin-search">${tag}<h4>${esc(area.n)}</h4><p>Busca por ${esc(custom||area.cargos[0])}${level?' · '+esc(level):''}</p><a class="btn small" href="${href}" target="_blank" rel="noopener noreferrer">Abrir busca no LinkedIn</a></article>`;
   }).join('');
 }
 [fa,fn,fm].forEach(el=>el.addEventListener('change',renderJobs));
