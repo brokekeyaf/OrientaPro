@@ -432,6 +432,23 @@ html[data-theme="dark"] .pathway-card:nth-child(3){border-left-color:#F0BE62}
 html[data-theme="dark"] .pathway-card::after,html[data-theme="dark"] .resource-grid .tool::after{color:#D6B9F4}
 html[data-theme="dark"] .resource-grid .tool{background:var(--card);border-color:var(--line)}
 html[data-theme="dark"] .resource-grid .tool::before{background:#71D7BF}
+/* Ajustes finais da skill de UX: legibilidade, navegação e consistência entre telas */
+nav.main a{display:inline-flex;align-items:center;min-height:44px}
+.menu-btn{min-height:44px;cursor:pointer}
+.view-head{padding-left:1rem;border-left:3px solid var(--mint)}
+.view-head h2{line-height:1.18}
+.view-head p{max-width:66ch;color:var(--ink-2)}
+.last-result{border-radius:14px;line-height:1.55}
+.jobs{align-items:stretch}
+.job{min-height:215px;padding:1.35rem}
+.job .actions .btn{min-height:44px}
+.filters{align-items:end}
+.filters input,.filters select{min-height:48px}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:var(--card);color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .last-result{background:var(--card);color:var(--ink);border-color:var(--line)!important}
+html[data-theme="dark"] .social-btn{background:var(--card);color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .social-btn:hover{background:#30283A}
+@media(max-width:760px){.pathway-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
   .block{padding-top:2.8rem}
   .tool{min-height:0}
