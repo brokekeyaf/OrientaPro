@@ -869,6 +869,98 @@ html[data-theme="dark"] footer{background:#211B27;border-top-color:#78539E}
   .resource-grid .tool,#sobre .pathway-card,#vagas .job{border-radius:4px}
   #vagas.jobs-layout{border-radius:6px}
 }
+/* Paleta da nova marca e acabamento mais técnico, com formas menos arredondadas */
+:root{
+  --purple:#06183F;--purple-2:#316BE8;--purple-d:#041231;--link:#2869D8;
+  --blue:#316BE8;--blue-d:#2455C5;--focus:#00BFD2;
+  --ink:#142440;--ink-2:#53637D;--paper:#F5F7FB;--card:#FFFFFF;--line:#D9E1EF;
+  --mint:#00BFD2;--amber:#7959E8;--rose:#B43D63;
+  --hero-surface:#EDF3FC;--hero-card:#FFFFFF;--soft-teal:#EAF5F9;--soft-amber:#F0EDFC;
+  --display:'Manrope','Segoe UI',Arial,sans-serif;--body:'Inter','Segoe UI',Arial,sans-serif;
+  --r-lg:8px;--r-md:5px;--r-sm:2px;
+}
+body{font-family:var(--body);background:var(--paper);color:var(--ink)}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.035em}
+h1{font-weight:800;line-height:1.08}
+h2{font-weight:800;line-height:1.18}
+h3{font-weight:700;line-height:1.3}
+header.top{background:#021641;border-bottom:1px solid #193160;box-shadow:none}
+.bar{min-height:76px}
+.logo{display:block;flex:none;width:250px;height:70px;overflow:hidden;margin-right:.4rem;border-radius:0;background:#021641}
+.logo-art{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+nav.main a{color:#E4ECFF;border-radius:3px;font-weight:600}
+nav.main a:hover{background:rgba(74,135,244,.18);color:#fff}
+nav.main a[aria-current="page"]{background:rgba(89,139,245,.24);color:#fff;box-shadow:inset 0 -2px #08C9DB}
+.menu-btn{background:#316BE8;color:white;border-radius:3px}
+.theme-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:3px}
+.theme-btn:hover{background:rgba(255,255,255,.18)}
+@media(max-width:900px){nav.main{background:#021641;border-color:#193160}}
+.hero-band{background:var(--hero-surface)}
+.hero-band h1{color:#10274C}
+.hero-band .lead{color:#4D607A}
+.hero-kicker{color:#2762CA}
+.hero-visual{background:#06183F;border:1px solid #162F60;border-radius:5px;box-shadow:0 12px 26px rgba(6,24,63,.13)}
+.journey-caption{color:#A8EAF0}
+.hero-steps::before{border-color:rgba(0,191,210,.55)}
+.hero-step-card{border-radius:3px;border-color:#E1E8F2}
+.hero-step-number{background:#316BE8;border-radius:3px}
+.hero-step-card:nth-child(2) .hero-step-number{background:#00AABD}
+.hero-step-card:nth-child(3) .hero-step-number{background:#7959E8}
+.journey-note{color:#DDE8F7}
+.btn{background:#316BE8;border-radius:3px;box-shadow:none}
+.btn:hover{background:#2455C5;box-shadow:none}
+.btn.hero-btn{padding:1rem 1.5rem}
+.block>h2::after{background:#00BFD2;border-radius:0;width:48px;height:3px}
+#sobre.about-layout{border:1px solid var(--line);border-top:3px solid #316BE8;border-radius:3px;box-shadow:0 8px 24px rgba(17,38,74,.045)}
+#sobre .pathway-card{border-radius:2px;border-left:3px solid #316BE8;background:#F8FAFD}
+#sobre .pathway-card:nth-child(2){border-left-color:#00AABD}
+#sobre .pathway-card:nth-child(3){border-left-color:#7959E8}
+#sobre .pathway-card::after{color:#316BE8}
+#sobre .pathway-card:hover{border-color:#AFC5E8;box-shadow:none;transform:translateX(3px)}
+#sobre>.last-result{border-radius:2px;background:#EDF3FC;border-color:#DAE5F4!important}
+.resource-grid .tool{border-radius:2px;box-shadow:none}
+.resource-grid .tool:nth-child(1){background:#06183F;border-color:#06183F;border-radius:2px}
+.resource-grid .tool:nth-child(1):hover{background:#0B2457;border-color:#0B2457}
+.resource-grid .tool::before{background:#00BFD2;border-radius:0}
+.resource-grid .tool:nth-child(2)::before{background:#316BE8}
+.resource-grid .tool:nth-child(3)::before{background:#7959E8}
+.resource-grid .tool:nth-child(4)::before{background:#00AABD}
+.resource-grid .tool:hover{border-color:#AFC5E8;box-shadow:0 6px 16px rgba(18,43,80,.075)}
+#vagas.jobs-layout{background:#EAF5F9;border:1px solid #D5E8EE;border-top:3px solid #00AABD;border-radius:3px}
+#vagas .job{border-radius:2px;border-color:#D7E4EA;box-shadow:none}
+#vagas .job:hover{border-color:#86C8D2;box-shadow:0 6px 16px rgba(18,43,80,.07)}
+.view-head{border-left-color:#00AABD}
+.panel{border-radius:4px;box-shadow:0 6px 20px rgba(18,43,80,.055)}
+input,select,textarea{border-radius:3px}
+.social-btn{border-radius:3px}
+footer{background:#021641;border-top:3px solid #316BE8;color:#DCE7F5}
+#toast{background:#021641;border-radius:4px}
+html[data-theme="dark"]{--purple:#E0E9FF;--purple-2:#83A9FF;--purple-d:#B4CAFF;--link:#AFC8FF;--blue:#83A9FF;--blue-d:#AFC8FF;--focus:#12D4E1;--ink:#ECF2FA;--ink-2:#B9C6D7;--paper:#111A2B;--card:#18243A;--line:#2D3D58;--mint:#16CBD9;--amber:#A48AFF;--rose:#FF8AA1;--hero-surface:#172640;--hero-card:#1B2A42;--soft-teal:#172C3D;--soft-amber:#29253F}
+html[data-theme="dark"] header.top{background:#02112E;border-bottom-color:#20365F}
+html[data-theme="dark"] .logo{background:#021641}
+html[data-theme="dark"] .hero-band h1{color:#F1F5FC}
+html[data-theme="dark"] .hero-band .lead{color:#C2CDE0}
+html[data-theme="dark"] .hero-visual{background:#06183F;border-color:#263D68}
+html[data-theme="dark"] .hero-step-card{background:#1B2A42;border-color:#334460}
+html[data-theme="dark"] .hero-step-card strong{color:#F1F5FC}
+html[data-theme="dark"] #sobre.about-layout{background:#18243A;border-color:#2D3D58;border-top-color:#83A9FF}
+html[data-theme="dark"] #sobre .pathway-card{background:#1C2A40;border-color:#354762;color:var(--ink)}
+html[data-theme="dark"] #sobre .pathway-card h3{color:var(--ink)}
+html[data-theme="dark"] #sobre .pathway-card p,html[data-theme="dark"] #sobre>p.center{color:var(--ink-2)}
+html[data-theme="dark"] #sobre .pathway-card:hover{background:#22344D;border-color:#506991}
+html[data-theme="dark"] #sobre>.last-result{background:#1E3047;border-color:#334B64!important;color:var(--ink-2)}
+html[data-theme="dark"] .resource-grid .tool{background:#18243A;border-color:#2D3D58;color:var(--ink)}
+html[data-theme="dark"] .resource-grid .tool p{color:var(--ink-2)}
+html[data-theme="dark"] .resource-grid .tool:nth-child(1){background:#06183F;border-color:#263D68;color:#fff}
+html[data-theme="dark"] .resource-grid .tool:nth-child(1) p{color:#DAE6F6}
+html[data-theme="dark"] .resource-grid .tool:hover{background:#22344D;border-color:#506991}
+html[data-theme="dark"] .resource-grid .tool:nth-child(1):hover{background:#0B2457}
+html[data-theme="dark"] #vagas.jobs-layout{background:#172C3D;border-color:#2D495A;border-top-color:#16CBD9}
+html[data-theme="dark"] #vagas .job{background:#18243A;border-color:#30475D}
+html[data-theme="dark"] .panel{background:#18243A;border-color:#2D3D58}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#111A2B;color:var(--ink);border-color:#354762}
+html[data-theme="dark"] footer{background:#02112E;border-top-color:#316BE8}
+@media(max-width:600px){.logo{width:190px;height:56px}#sobre.about-layout,#vagas.jobs-layout{border-radius:2px}.resource-grid .tool,#sobre .pathway-card,#vagas .job{border-radius:2px}}
 </style>
 </head>
 <body>
@@ -876,7 +968,7 @@ html[data-theme="dark"] footer{background:#211B27;border-top-color:#78539E}
 
 <header class="top">
   <div class="wrap bar">
-    <a class="logo" href="#inicio" aria-label="OrientaPro, página inicial"><i aria-hidden="true"></i>OrientaPro</a>
+    <a class="logo" href="#inicio" aria-label="OrientaPro, página inicial"><img class="logo-art" src="orientapro-logo.png" alt=""></a>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mainNav" aria-label="Abrir menu">&#9776;</button>
     <nav class="main" id="mainNav" aria-label="Principal">
       <a href="#inicio">Início</a>
