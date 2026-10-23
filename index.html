@@ -975,7 +975,7 @@ html[data-theme="dark"] footer{background:#02112E;border-top-color:#316BE8}
       <a href="#sobre">Sobre</a>
       <a href="#recursos">Recursos</a>
       <a href="#vagas">Vagas</a>
-      <a href="#cadastro" id="navCadastro">Cadastro</a>
+      <a href="#cadastro" id="navCadastro" hidden>Cadastro</a>
       <a href="#entrar" id="navConta">Entrar</a>
     </nav>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="Ativar modo escuro" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 15.4A8.5 8.5 0 0 1 8.6 3.5 8.5 8.5 0 1 0 20.5 15.4Z"/></svg></button>
@@ -1970,11 +1970,12 @@ function aplicarModo(){
   $('#cvSub').textContent=OP.ativo?'Preencha à esquerda. A prévia e a nota atualizam sozinhas. Entre na conta para salvar.':'Preencha à esquerda. A prévia e a nota atualizam sozinhas, e seus dados ficam só neste navegador.';
 }
 async function atualizarConta(){
-  if(!OP.ativo){conta=null;renderCvConta();return}
+  if(!OP.ativo){conta=null;$('#navCadastro').hidden=false;$('#navConta').textContent='Entrar';renderCvConta();return}
+  const usuario=await OP.auth.usuario().catch(()=>null);
+  $('#navCadastro').hidden=!!usuario;
   try{ conta=await OP.auth.perfil(); }catch(e){ conta=null; }
   if(conta&&conta.ativo===false&&!String(conta.motivo_bloqueio||'').startsWith('Cadastro pendente:')){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
   $('#navConta').textContent=conta?'Minha conta':'Entrar';
-  $('#navCadastro').hidden=!!(conta||await OP.auth.usuario());
   if(conta&&conta.ativo!==false){ preencherContato(); gravarTestePendente(); carregarDesafiosDaConta(); }
   renderEntrar(); carregarListaCv(); renderHome();
 }
