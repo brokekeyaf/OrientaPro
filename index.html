@@ -1974,7 +1974,7 @@ async function atualizarConta(){
   try{ conta=await OP.auth.perfil(); }catch(e){ conta=null; }
   if(conta&&conta.ativo===false&&!String(conta.motivo_bloqueio||'').startsWith('Cadastro pendente:')){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
   $('#navConta').textContent=conta?'Minha conta':'Entrar';
-  $('#navCadastro').hidden=!!conta;
+  $('#navCadastro').hidden=!!(conta||await OP.auth.usuario());
   if(conta&&conta.ativo!==false){ preencherContato(); gravarTestePendente(); carregarDesafiosDaConta(); }
   renderEntrar(); carregarListaCv(); renderHome();
 }
