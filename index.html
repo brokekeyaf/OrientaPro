@@ -310,7 +310,7 @@ details.termo summary{cursor:pointer;color:var(--link)}
       <a href="#sobre">Sobre</a>
       <a href="#recursos">Recursos</a>
       <a href="#vagas">Vagas</a>
-      <a href="#cadastro">Cadastro</a>
+      <a href="#cadastro" id="navCadastro">Cadastro</a>
       <a href="#entrar" id="navConta">Entrar</a>
     </nav>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="Ativar modo escuro" aria-pressed="false">🌙</button>
@@ -367,6 +367,12 @@ details.termo summary{cursor:pointer;color:var(--link)}
       <p class="center" id="cadIntro">Crie seu perfil para personalizar as sugestões. Neste protótipo os dados ficam apenas no seu navegador.</p>
       <div style="max-width:560px;margin:1.5rem auto 0">
         <form class="panel" id="cadForm" novalidate>
+      <div class="social-login" id="cadSocial" hidden>
+        <button class="social-btn" type="button" id="cadGoogle">G&nbsp; Cadastrar com Google</button>
+        <button class="social-btn" type="button" id="cadLinkedin">in&nbsp; Cadastrar com LinkedIn</button>
+      </div>
+      <div class="login-divider" id="cadDivider" hidden>ou cadastre-se com e-mail</div>
+      <div class="msg" id="cadSocialMsg" role="status" aria-live="polite"></div>
       <div class="field"><label for="cNome">Nome</label><input id="cNome" autocomplete="name"><div class="err" data-for="cNome"></div></div>
       <div class="field"><label for="cEmail">E-mail</label><input id="cEmail" type="email" autocomplete="email"><div class="err" data-for="cEmail"></div></div>
       <div class="field"><label for="cNasc">Data de nascimento</label><input id="cNasc" type="date" autocomplete="bday"><div class="err" data-for="cNasc"></div></div>
@@ -1280,6 +1286,8 @@ function aplicarModo(){
   $('#cadIntro').textContent=OP.ativo?'Crie sua conta para salvar o resultado do teste e seus currículos.':'Crie seu perfil para personalizar as sugestões. Neste protótipo os dados ficam apenas no seu navegador.';
   $('#cAceiteTxt').textContent=OP.ativo?'Li e aceito o termo de uso e privacidade.':'Concordo em guardar estes dados neste navegador para fins de demonstração.';
   $('#cadBtn').textContent=OP.ativo?'Criar minha conta':'Criar meu perfil';
+  $('#cadSocial').hidden=!OP.ativo;
+  $('#cadDivider').hidden=!OP.ativo;
   $('#cadJaTem').hidden=!OP.ativo;
   $('#cvSub').textContent=OP.ativo?'Preencha à esquerda. A prévia e a nota atualizam sozinhas. Entre na conta para salvar.':'Preencha à esquerda. A prévia e a nota atualizam sozinhas, e seus dados ficam só neste navegador.';
 }
@@ -1288,6 +1296,7 @@ async function atualizarConta(){
   try{ conta=await OP.auth.perfil(); }catch(e){ conta=null; }
   if(conta&&conta.ativo===false&&!String(conta.motivo_bloqueio||'').startsWith('Cadastro pendente:')){ await OP.auth.sair(); conta=null; toast('Sua conta está bloqueada.'); }
   $('#navConta').textContent=conta?'Minha conta':'Entrar';
+  $('#navCadastro').hidden=!!conta;
   if(conta&&conta.ativo!==false){ preencherContato(); gravarTestePendente(); carregarDesafiosDaConta(); }
   renderEntrar(); carregarListaCv(); renderHome();
 }
@@ -1298,6 +1307,13 @@ async function loginSocial(provedor){
 }
 $('#loginGoogle').addEventListener('click',()=>loginSocial('google'));
 $('#loginLinkedin').addEventListener('click',()=>loginSocial('linkedin_oidc'));
+async function cadastroSocial(provedor){
+  const m=$('#cadSocialMsg'),botoes=[$('#cadGoogle'),$('#cadLinkedin')];
+  m.className='msg';m.textContent='Abrindo o acesso seguro…';botoes.forEach(b=>b.disabled=true);
+  try{await OP.auth.entrarSocial(provedor)}catch(err){m.className='msg no';m.textContent=err.message;botoes.forEach(b=>b.disabled=false)}
+}
+$('#cadGoogle').addEventListener('click',()=>cadastroSocial('google'));
+$('#cadLinkedin').addEventListener('click',()=>cadastroSocial('linkedin_oidc'));
 $('#socialOnboarding').addEventListener('submit',async e=>{
   e.preventDefault();const nascimento=$('#socialBirth').value;
   const valida=!!nascimento&&idade(nascimento)>=14&&idade(nascimento)<120;
